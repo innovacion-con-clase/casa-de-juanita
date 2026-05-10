@@ -64,6 +64,17 @@
         @keyframes scale-up { from { transform: scale(0.98); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         .animate-fade-in { animation: fade-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         .animate-scale-up { animation: scale-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+
+        /* MODO OSCURO */
+        .dark-mode { background-color: #0f172a !important; color: #f1f5f9 !important; }
+        .dark-mode .glass { background: rgba(15, 23, 42, 0.85) !important; border-color: rgba(255, 255, 255, 0.1) !important; }
+        .dark-mode .bg-white { background-color: #1e293b !important; color: #f1f5f9 !important; border-color: #334155 !important; }
+        .dark-mode .text-slate-900, .dark-mode .text-slate-800 { color: #f8fafc !important; }
+        .dark-mode .text-slate-600, .dark-mode .text-slate-500 { color: #94a3b8 !important; }
+        .dark-mode .bg-[#fdfcf9] { background-color: #0f172a !important; }
+        .dark-mode .bg-slate-50 { background-color: #334155 !important; }
+        .dark-mode .border-slate-100 { border-color: #334155 !important; }
+        .dark-mode .input-elegant { background-color: #1e293b !important; color: white !important; border-color: #334155 !important; }
     </style>
 
     <script>
@@ -88,6 +99,7 @@
                 selectedCategory: 'Todos',
                 progress: 0,
                 expandedBibleSteps: [],
+                darkMode: false,
                 categories: ["Todos", "Fe", "Vida", "Propósito", "Relaciones"],
                 
                 // Contenido del Devocional (Textos Justificados)
@@ -167,6 +179,9 @@
                 ],
 
                 init() {
+                    const savedMode = localStorage.getItem('juanita_dark_mode');
+                    if (savedMode) this.darkMode = JSON.parse(savedMode);
+
                     const savedUser = localStorage.getItem('juanita_user');
                     if (savedUser) {
                         const user = JSON.parse(savedUser);
@@ -275,6 +290,11 @@
                     }
                 },
 
+                toggleDarkMode() {
+                    this.darkMode = !this.darkMode;
+                    localStorage.setItem('juanita_dark_mode', JSON.stringify(this.darkMode));
+                },
+
                 toggleBibleStep(index) {
                     if (this.expandedBibleSteps.includes(index)) {
                         this.expandedBibleSteps = this.expandedBibleSteps.filter(i => i !== index);
@@ -331,7 +351,7 @@
 </head>
 <body class="bg-slate-200 antialiased flex items-center justify-center min-h-screen">
 
-    <div x-data="appData" x-cloak class="w-full max-w-md bg-white h-screen sm:h-[880px] sm:rounded-[3.5rem] shadow-2xl flex flex-col relative overflow-hidden border border-slate-100">
+    <div x-data="appData()" :class="darkMode ? 'dark-mode' : ''" class="relative w-full max-w-md h-screen sm:h-[880px] bg-[#fdfcf9] shadow-2xl flex flex-col overflow-hidden border border-slate-100 transition-colors duration-500">
         
         <template x-if="view === 'auth'">
             <div class="h-full w-full bg-[#fdfcf9] flex flex-col items-center justify-between p-10 animate-fade-in overflow-y-auto no-scrollbar relative">
@@ -697,6 +717,17 @@
 
                     <!-- Opciones -->
                     <div class="space-y-4">
+                        <!-- Modo Oscuro Toggle -->
+                        <div class="w-full p-6 bg-white border border-slate-100 rounded-[2rem] flex items-center gap-4 hover:bg-slate-50 transition-colors cursor-pointer" @click="toggleDarkMode()">
+                            <div class="w-10 h-10 bg-indigo-50 text-indigo-500 rounded-xl flex items-center justify-center">
+                                <i :data-lucide="darkMode ? 'sun' : 'moon'" class="w-5 h-5"></i>
+                            </div>
+                            <span class="flex-1 text-left font-black text-slate-700" x-text="darkMode ? 'Modo Claro' : 'Modo Oscuro'"></span>
+                            <div class="w-12 h-6 bg-slate-200 rounded-full relative transition-colors" :class="darkMode ? 'bg-[#c68b6d]' : 'bg-slate-200'">
+                                <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform" :class="darkMode ? 'translate-x-6' : ''"></div>
+                            </div>
+                        </div>
+
                         <button class="w-full p-6 bg-white border border-slate-100 rounded-[2rem] flex items-center gap-4 hover:bg-slate-50 transition-colors">
                             <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center"><i data-lucide="bell" class="w-5 h-5"></i></div>
                             <span class="flex-1 text-left font-black text-slate-700">Notificaciones</span>
