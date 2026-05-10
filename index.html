@@ -6,8 +6,6 @@
     <title>Mamá: Entre Altares y Algoritmos - La Casa de Juanita</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Alpine.js -->
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
@@ -21,31 +19,37 @@
         [x-cloak] { display: none !important; }
         @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
+        .text-justify { text-align: justify; text-justify: inter-word; }
     </style>
 
     <script>
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxChmGHzMS3mK9AfTgwwtD6Ev7k91pRws5bt5MPLJemYbT1bEJrSHa5RnUHzpTlBdQf/exec";
 
-        function appData() {
-            return {
+        // Inicialización oficial de Alpine.js para evitar errores de referencia
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('appData', () => ({
                 view: 'auth',
+                authStep: 'input',
+                userName: '',
                 userEmail: '',
-                accessCode: '',
+                userPassword: '',
+                verificationCode: '',
                 isSubmitting: false,
                 isMuted: true,
                 activeStep: 0,
                 completedSteps: [],
                 reflections: {},
-                bibleVersion: 'RVR1960',
+                bibleVersion: 'NTV',
                 selectedCategory: 'Todos',
                 progress: 0,
                 categories: ["Todos", "Fe", "Vida", "Propósito", "Relaciones"],
                 
+                // Contenido del Devocional (Textos Justificados)
                 roadmap: [
                     { 
                         title: "El Hilo Invisible", 
                         subtitle: "Introducción", 
-                        context: "Imagina un hilo de seda que recorre décadas de historia. No se rompe, solo cambia de color. Ese hilo es la influencia de una madre.", 
+                        context: "Imagina un hilo de seda que recorre décadas de historia. No se rompe, solo cambia de color. Ese hilo es la influencia de una madre. Hoy no solo miramos hacia atrás con nostalgia, sino con curiosidad: ¿Qué semillas plantaron nuestras abuelas que aún florecen hoy? ¿Y qué semillas estamos plantando nosotras en un mundo lleno de pantallas?", 
                         verse_rvr: "Trayendo a la memoria la fe no fingida que hay en ti, la cual habitó primero en tu abuela Loida, y en tu madre Eunice, y estoy cierto que en ti también.", 
                         verse_ntv: "Me acuerdo de tu fe sincera, pues tú tienes la misma fe de la que primero se alimentaron tu abuela Loida y tu madre, Eunice, y sé que esa fe sigue viva en ti.", 
                         ref: "2 Timoteo 1:5", 
@@ -54,7 +58,7 @@
                     { 
                         title: "Presencia y Tradición", 
                         subtitle: "Los 60s", 
-                        context: "Una era de rituales. El olor al desayuno, la mesa como el centro del universo y la iglesia como el eje social.", 
+                        context: "Una era de rituales. El olor al desayuno, la mesa como el centro del universo y la iglesia como el eje social. La madre era la guardiana del hogar, enfocada en la formación del carácter a través de la constancia. La seguridad se encontraba en el orden y la provisión emocional.", 
                         verse_rvr: "Se levanta aun de noche y da comida a su familia y ración a sus criadas... Fuerza y honor son su vestidura; y se ríe de lo por venir.", 
                         verse_ntv: "Se levanta de madrugada para preparar el desayuno para su familia y planificar las labores de sus criadas... Está vestida de fortaleza y dignidad, y se ríe sin temor al futuro.", 
                         ref: "Proverbios 31:15, 25", 
@@ -63,7 +67,7 @@
                     { 
                         title: "Resiliencia en el Cambio", 
                         subtitle: "Los 70s", 
-                        context: "Las madres de los 70 enseñaron resiliencia: cómo mantener la fe cuando el mundo exterior empieza a gritar más fuerte.", 
+                        context: "Las madres de los 70 enseñaron resiliencia: cómo mantener la fe cuando el mundo exterior empieza a gritar más fuerte que las tradiciones. Es una década de cuestionamientos y búsqueda de identidad donde la mujer comenzó a ganar espacios masivos fuera del hogar.", 
                         verse_rvr: "Mujer virtuosa, ¿quién la hallará? Porque su estima sobrepasa largamente a la de las piedras preciosas... No tiene temor de la nieve por su familia, porque toda su familia está vestida de ropas dobles.", 
                         verse_ntv: "¿Quién podrá encontrar una esposa virtuosa y capaz? Es más preciosa que los rubíes... No tiene miedo al frío por su familia, porque todos tienen ropas abrigadas.", 
                         ref: "Proverbios 31:10, 21", 
@@ -72,7 +76,7 @@
                     { 
                         title: "La Era de la Influencia", 
                         subtitle: "Los 80s", 
-                        context: "La fe se transmitía en el trayecto, en la conversación casual, integrando a Dios en la cotidianidad acelerada.", 
+                        context: "La fe se transmitía en el trayecto, en la conversación casual, integrando a Dios en la cotidianidad acelerada. En una década marcada por el consumo y la cultura pop, la influencia se volvió activa para proteger los valores frente a la omnipresente televisión.", 
                         verse_rvr: "Y estas palabras que yo te mando hoy, estarán sobre tu corazón; y las repetirás a tus hijos, y hablarás de ellas estando en tu casa, y andando por el camino, y al acostarte, y cuando te levantes.", 
                         verse_ntv: "Debes comprometerte con todo tu ser a cumplir estas decisiones que te entrego hoy. Repíteselas a tus hijos una y otra vez. Habla de ellas en tus conversaciones cuando estés en tu casa.", 
                         ref: "Deuteronomio 6:6-7", 
@@ -81,7 +85,7 @@
                     { 
                         title: "Conexión y Prudencia", 
                         subtitle: "Los 90s", 
-                        context: "El rol mutó hacia la mediación: explicar el mundo a los hijos frente a la transición digital.", 
+                        context: "El rol mutó hacia la mediación: explicar el mundo a los hijos frente a la transición digital. Se valoró más la inteligencia emocional y la comunicación abierta, convirtiendo a la madre en el filtro necesario para procesar los cambios rápidos del entorno.", 
                         verse_rvr: "Asimismo, las ancianas deben ser reverentes en su conducta... que enseñen a las mujeres jóvenes a amar a sus maridos y a sus hijos, a ser prudentes, castas, cuidadosas de su casa, buenas...", 
                         verse_ntv: "Enseña a las mujeres mayores a vivir de una manera que demuestre reverencia... deben instruir a las mujeres más jóvenes a amar a sus esposos y a sus hijos, a vivir sabiamente.", 
                         ref: "Tito 2:3-5", 
@@ -90,7 +94,7 @@
                     { 
                         title: "La Era del Algoritmo", 
                         subtitle: "El Hoy", 
-                        context: "No compites con la vecina, compites con un algoritmo. El reto es recuperar la intencionalidad.", 
+                        context: "No compites con la vecina, compites con un algoritmo. El reto es recuperar la intencionalidad frente al exceso de comparación de las redes sociales. Amoldarse hoy significa dejar que Instagram dicte tu valor; renovar la mente es volver a la identidad que Dios te da.", 
                         verse_rvr: "No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento, para que comprobéis cuál sea la buena voluntad de Dios, agradable y perfecta.", 
                         verse_ntv: "No se amolden a la conducta ni a las costumbres de este mundo, más bien dejen que Dios los transforme en personas nuevas al cambiarles la manera de pensar.", 
                         ref: "Romanos 12:2", 
@@ -99,7 +103,7 @@
                     { 
                         title: "Oración y Legado", 
                         subtitle: "Conclusión", 
-                        context: "La maternidad ha cambiado de forma, pero su esencia es eterna: ser el reflejo del amor incondicional de Dios.", 
+                        context: "La maternidad ha cambiado de forma, pero su esencia es eterna: ser el reflejo del amor incondicional de Dios. No importa en qué década naciste; el Espíritu Santo es el mismo ayer, hoy y siempre. Tu mirada será el refugio de tus hijos.", 
                         verse_rvr: "Padre, gracias por las mujeres que me precedieron. Gracias por sus oraciones, que hoy son mi suelo. Ayúdame a ser una madre que no busca perfección, sino presencia. Que mis hijos no recuerden mi teléfono, sino mis ojos. Amén.", 
                         verse_ntv: "Dios, gracias por el legado de las que abrieron el camino. Dame la sabiduría para estar presente y que mi mirada sea el refugio de mis hijos en este mundo digital. Amén.", 
                         ref: "Oración Final", 
@@ -107,57 +111,58 @@
                     }
                 ],
 
+                // Biblioteca de otros devocionales (Textos Justificados)
                 otherDevotionals: [
                     { title: "La Ciencia de Atrapar el Viento", url: "https://innovacion-con-clase.github.io/la-ciencia-de-atrapar-el-viento/", icon: 'wind', color: "bg-blue-50 text-blue-600", cat: "Fe" },
                     { title: "Ordena tus Letras", url: "https://innovacion-con-clase.github.io/Ordena-tus-Letras/", icon: 'pen-tool', color: "bg-amber-50 text-amber-600", cat: "Propósito" },
                     { title: "ADN de Rescatista", url: "https://innovacion-con-clase.github.io/ADN-de-Rescatista/", icon: 'shield', color: "bg-red-50 text-red-600", cat: "Vida" },
-                    { title: "La Fe que se Arremanga", url: "https://innovacion-con-clase.github.io/paz/", icon: 'hand-heart', color: "bg-emerald-50 text-emerald-600", cat: "Fe" },
-                    { title: "El código del Milagro", url: "https://innovacion-con-clase.github.io/milagros/", icon: 'sparkles', color: "bg-yellow-50 text-yellow-600", cat: "Fe" },
-                    { title: "Revelados", url: "https://innovacion-con-clase.github.io/ReVelados/", icon: 'sparkles', color: "bg-fuchsia-50 text-fuchsia-600", cat: "Fe" },
-                    { title: "Removiendo escombros", url: "https://innovacion-con-clase.github.io/removiendo-escombros/", icon: 'hammer', color: "bg-orange-50 text-orange-600", cat: "Vida" }
+                    { title: "La mesa esta servida", url: "https://innovacion-con-clase.github.io/la-mesa-esta-servida/", icon: 'table', color: "bg-stone-50 text-stone-700", cat: "Vida" }
                 ],
 
                 init() {
-                    this.$watch('view', () => this.refreshIcons());
-                    this.refreshIcons();
+                    this.refreshUI();
+                    this.$watch('view', () => this.refreshUI());
+                    this.$watch('selectedCategory', () => this.refreshUI());
                 },
 
-                refreshIcons() {
+                refreshUI() {
                     this.$nextTick(() => {
                         lucide.createIcons();
                         const scrollArea = document.getElementById('readingScroll');
-                        if(scrollArea) scrollArea.scrollTop = 0;
+                        if (scrollArea) scrollArea.scrollTop = 0;
                     });
                 },
 
                 get filteredPlans() {
-                    if (this.selectedCategory === 'Todos') return this.otherDevotionals;
-                    return this.otherDevotionals.filter(p => p.cat === this.selectedCategory);
+                    return this.selectedCategory === 'Todos' ? this.otherDevotionals : this.otherDevotionals.filter(p => p.cat === this.selectedCategory);
                 },
 
-                async handleAuth() {
-                    if (this.accessCode !== "JUANITA2024") {
-                        alert("Código incorrecto. Verifica el código de Wilson Pareja C.");
+                async sendCode() {
+                    if (!this.userName || !this.userEmail || !this.userPassword) {
+                        alert("Por favor completa todos los campos.");
                         return;
                     }
                     this.isSubmitting = true;
-                    
                     try {
-                        // Envío real a tu Google Apps Script
                         await fetch(APPS_SCRIPT_URL, {
                             method: 'POST',
-                            mode: 'no-cors', // Apps Script requiere esto para POST simples
-                            body: JSON.stringify({
-                                action: 'register',
-                                email: this.userEmail,
-                                code: this.accessCode
-                            })
+                            mode: 'no-cors',
+                            body: JSON.stringify({ action: 'sendOTP', email: this.userEmail, name: this.userName })
                         });
-                        
-                        this.view = 'video_intro';
+                        this.authStep = 'verify';
                     } catch (e) {
-                        console.error("Error al registrar:", e);
-                        // Fallback por si falla el fetch (puedes decidir si permitir entrar o no)
+                        console.error(e);
+                        this.authStep = 'verify';
+                    } finally {
+                        this.isSubmitting = false;
+                    }
+                },
+
+                async verifyAndRegister() {
+                    if (this.verificationCode.length < 4) return;
+                    this.isSubmitting = true;
+                    try {
+                        // Aquí enviarías la confirmación final al script
                         this.view = 'video_intro';
                     } finally {
                         this.isSubmitting = false;
@@ -167,259 +172,181 @@
                 markStepComplete() {
                     if (!this.completedSteps.includes(this.activeStep)) {
                         this.completedSteps.push(this.activeStep);
-                        this.progress = Math.round((this.completedSteps.length / 7) * 100);
+                        this.progress = Math.round((this.completedSteps.length / this.roadmap.length) * 100);
                     }
-                    if (this.activeStep === 6) {
-                        this.view = 'success';
-                    } else {
-                        this.activeStep++;
-                        this.refreshIcons();
-                    }
+                    if (this.activeStep === 6) this.view = 'success';
+                    else { this.activeStep++; this.refreshUI(); }
                 }
-            }
-        }
+            }));
+        });
     </script>
+    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-slate-200 antialiased flex items-center justify-center min-h-screen">
 
-    <div x-data="appData()" x-cloak class="w-full max-w-md bg-white h-screen sm:h-[880px] sm:rounded-[3.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.15)] flex flex-col relative overflow-hidden border border-slate-100">
+    <div x-data="appData" x-cloak class="w-full max-w-md bg-white h-screen sm:h-[880px] sm:rounded-[3.5rem] shadow-2xl flex flex-col relative overflow-hidden border border-slate-100">
         
-        <!-- Pantalla 1: Registro -->
+        <!-- PANTALLA: REGISTRO -->
         <template x-if="view === 'auth'">
-            <div class="h-full w-full bg-[#f4f5f7] flex flex-col items-center justify-center p-8 animate-fade-in">
-                <div class="w-20 h-20 rounded-[2rem] bg-slate-900 shadow-xl flex items-center justify-center text-white font-black text-xl mb-8">LJ</div>
-                <h1 class="text-3xl font-black text-slate-900 text-center mb-2 leading-tight">La Casa de Juanita</h1>
-                <p class="text-slate-500 text-center mb-10 font-medium leading-relaxed px-4 text-center">Únete a "Mamá: Entre Altares y Algoritmos" y comienza tu viaje hoy.</p>
+            <div class="h-full w-full bg-[#f4f5f7] flex flex-col items-center justify-center p-8 animate-fade-in overflow-y-auto no-scrollbar">
+                <img src="https://i.imgur.com/dDYOrEm.png" alt="LJ" class="w-24 mb-6">
                 
-                <form @submit.prevent="handleAuth" class="w-full space-y-4">
-                    <div class="relative">
-                        <i data-lucide="mail" class="absolute left-5 top-5 text-slate-400 w-5 h-5"></i>
-                        <input type="email" required placeholder="Tu correo electrónico" x-model="userEmail"
-                            class="w-full pl-14 pr-6 py-5 bg-white border-2 border-slate-100 rounded-3xl focus:border-blue-500 transition-all outline-none text-lg font-medium shadow-sm">
-                    </div>
-                    <div class="relative">
-                        <i data-lucide="lock" class="absolute left-5 top-5 text-slate-400 w-5 h-5"></i>
-                        <input type="text" required placeholder="Código de acceso" x-model="accessCode"
-                            class="w-full pl-14 pr-6 py-5 bg-white border-2 border-slate-100 rounded-3xl focus:border-blue-500 transition-all outline-none text-lg font-medium shadow-sm">
-                    </div>
-                    <button type="submit" :disabled="isSubmitting"
-                        class="w-full py-5 bg-slate-900 text-white rounded-3xl font-black text-xl shadow-2xl hover:bg-black transition-all flex items-center justify-center gap-3 disabled:opacity-70">
-                        <span x-show="!isSubmitting">EMPEZAR DEVOCIONAL</span>
-                        <i x-show="!isSubmitting" data-lucide="arrow-right" class="w-5 h-5"></i>
-                        <span x-show="isSubmitting" class="animate-spin text-xl">⌛</span>
-                    </button>
-                </form>
-                <p class="mt-8 text-[10px] font-black text-slate-300 uppercase tracking-widest text-center">Un espacio creado por Wilson Pareja C.</p>
+                <div x-show="authStep === 'input'" class="w-full text-center">
+                    <h1 class="text-2xl font-black text-slate-900 mb-1">Crear Perfil</h1>
+                    <p class="text-slate-500 mb-8 text-sm">Recibirás un código de acceso en tu correo.</p>
+                    <form @submit.prevent="sendCode()" class="space-y-3">
+                        <div class="relative text-left">
+                            <i data-lucide="user" class="absolute left-4 top-4 text-slate-400 w-4 h-4"></i>
+                            <input type="text" required placeholder="Nombre" x-model="userName" class="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none">
+                        </div>
+                        <div class="relative text-left">
+                            <i data-lucide="mail" class="absolute left-4 top-4 text-slate-400 w-4 h-4"></i>
+                            <input type="email" required placeholder="Correo electrónico" x-model="userEmail" class="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none">
+                        </div>
+                        <div class="relative text-left">
+                            <i data-lucide="lock" class="absolute left-4 top-4 text-slate-400 w-4 h-4"></i>
+                            <input type="password" required placeholder="Contraseña" x-model="userPassword" class="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none">
+                        </div>
+                        <button type="submit" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black shadow-lg">OBTENER CÓDIGO</button>
+                    </form>
+                </div>
+
+                <div x-show="authStep === 'verify'" class="w-full text-center">
+                    <h1 class="text-2xl font-black text-slate-900 mb-1">Verificar Correo</h1>
+                    <p class="text-slate-500 mb-8 text-sm">Ingresa el código enviado a <br><b x-text="userEmail"></b></p>
+                    <form @submit.prevent="verifyAndRegister()" class="space-y-4">
+                        <input type="text" maxlength="4" required placeholder="0000" x-model="verificationCode" class="w-32 text-center text-3xl font-black py-4 bg-white border-2 border-slate-100 rounded-2xl tracking-[10px] outline-none focus:border-blue-500">
+                        <button type="submit" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg">ACCEDER</button>
+                        <button @click="authStep = 'input'" type="button" class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-4">Cambiar datos</button>
+                    </form>
+                </div>
             </div>
         </template>
 
-        <!-- Pantalla 2: Intro Video -->
+        <!-- PANTALLA: INTRO VIDEO -->
         <template x-if="view === 'video_intro'">
-            <div class="relative h-full w-full bg-black flex flex-col animate-fade-in overflow-hidden text-left">
-                <video autoplay loop :muted="isMuted" playsinline class="absolute inset-0 w-full h-full object-cover opacity-60">
-                    <source src="https://i.imgur.com/XOKwR06.mp4" type="video/mp4">
-                </video>
+            <div class="relative h-full w-full bg-black flex flex-col animate-fade-in overflow-hidden">
+                <video autoplay loop :muted="isMuted" playsinline class="absolute inset-0 w-full h-full object-cover opacity-60"><source src="https://i.imgur.com/XOKwR06.mp4" type="video/mp4"></video>
                 <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black"></div>
                 <div class="relative z-10 flex flex-col h-full p-10 text-white text-left">
                     <div class="mt-12 space-y-2">
-                        <div class="flex items-center gap-2 mb-4">
-                            <div class="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center font-black text-[10px]">LJ</div>
-                            <span class="text-[#c68b6d] text-[10px] font-black uppercase tracking-[0.4em]">La Casa de Juanita</span>
-                        </div>
-                        <h1 class="text-5xl font-black leading-[0.9]">Mamá:<br/>Entre Altares y Algoritmos</h1>
-                        <p class="text-white/40 text-sm font-bold tracking-widest uppercase mt-4">Por Wilson Pareja C.</p>
+                        <img src="https://i.imgur.com/dDYOrEm.png" alt="LJ" class="w-20 mb-4 brightness-200">
+                        <h1 class="text-5xl font-black leading-[0.9]">Mamá:<br>Entre Altares y Algoritmos</h1>
                     </div>
-                    <div class="mt-auto space-y-6">
-                        <p class="text-xl leading-relaxed font-serif italic text-white/90">"La fe no aparece de la nada; es un ecosistema que se cultiva en el hogar."</p>
-                        <div class="flex gap-4 items-center">
-                            <button @click="isMuted = !isMuted" class="p-5 bg-white/10 backdrop-blur-2xl rounded-3xl text-white border border-white/10 active:scale-90 transition-all">
-                                <i :data-lucide="isMuted ? 'volume-x' : 'volume-2'" class="w-6 h-6"></i>
-                            </button>
-                            <button @click="view = 'home'" class="flex-1 py-5 bg-white text-black rounded-3xl font-black text-lg shadow-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-center">
-                                COMENZAR <i data-lucide="arrow-right" class="w-5 h-5 inline-block"></i>
-                            </button>
-                        </div>
+                    <div class="mt-auto space-y-6 text-left">
+                        <p class="text-xl font-serif italic text-white/90 text-justify">"La fe no aparece de la nada; es un ecosistema que se cultiva en el hogar."</p>
+                        <button @click="view = 'home'" class="w-full py-5 bg-white text-black rounded-3xl font-black shadow-2xl flex items-center justify-center gap-3">COMENZAR <i data-lucide="arrow-right"></i></button>
                     </div>
                 </div>
             </div>
         </template>
 
-        <!-- Pantalla 3: Home -->
+        <!-- PANTALLA: HOME -->
         <template x-if="view === 'home'">
             <div class="bg-[#f4f5f7] h-full flex flex-col animate-fade-in overflow-y-auto pb-36 text-left no-scrollbar">
                 <div class="bg-white/80 backdrop-blur-md px-6 pt-12 pb-6 flex justify-between items-center sticky top-0 z-20 border-b border-slate-100/50">
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3 text-left">
                         <div class="w-10 h-10 rounded-2xl bg-[#1c1c1c] shadow-lg flex items-center justify-center text-white font-black text-[10px]">LJ</div>
-                        <div>
-                            <h1 class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">La Casa de Juanita</h1>
-                            <p class="text-xl font-black text-slate-900 tracking-tight">Hola, Mujer de Fe</p>
-                        </div>
+                        <p class="text-xl font-black text-slate-900" x-text="'Hola, ' + userName.split(' ')[0]"></p>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <button @click="view = 'discover'" class="p-3 bg-slate-100 rounded-2xl text-slate-600 active:scale-90 transition-all"><i data-lucide="search" class="w-5 h-5"></i></button>
-                        <div class="flex items-center gap-1.5 bg-orange-100/50 px-3 py-1.5 rounded-2xl border border-orange-100">
-                            <i data-lucide="zap" class="w-4 h-4 text-orange-500 fill-orange-500"></i>
-                            <span class="text-orange-900 font-black text-xs">1</span>
-                        </div>
-                    </div>
+                    <button @click="view = 'discover'" class="p-3 bg-slate-100 rounded-2xl text-slate-600"><i data-lucide="search"></i></button>
                 </div>
-
                 <div class="p-6 space-y-10">
                     <div class="space-y-4">
-                        <h2 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em] text-left">Historia del Día</h2>
-                        <div class="bg-slate-900 rounded-[2.5rem] shadow-2xl shadow-slate-200 overflow-hidden relative">
-                            <div class="p-8 space-y-6 text-left">
-                                <div class="flex items-center gap-3 text-orange-400 font-black text-[10px] uppercase tracking-widest">
-                                    <i data-lucide="book-marked" class="w-4 h-4"></i> La Biblia de la Abuela
-                                </div>
-                                <div class="space-y-4 text-white/90 font-serif italic text-lg leading-relaxed max-h-[240px] overflow-y-auto pr-2 no-scrollbar">
-                                    <p>Había un joven que estaba pasando por uno de los momentos más difíciles de su vida...</p>
-                                    <p>Una noche encontró una Biblia muy desgastada. En la primera página decía: <span class="text-orange-300 font-bold">“Para mi hijo, para que nunca olvide que Dios camina con él. — Mamá”</span></p>
-                                    <p>Entendió allí que las oraciones de una madre nunca mueren.</p>
-                                </div>
-                            </div>
+                        <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest text-left">Historia del Día</h2>
+                        <div class="bg-slate-900 rounded-[2.5rem] shadow-2xl p-8 space-y-6 text-left">
+                            <div class="flex items-center gap-3 text-orange-400 font-black text-[10px] uppercase text-left"><i data-lucide="book-marked" class="w-4 h-4 text-orange-400"></i> La Biblia de la Abuela</div>
+                            <p class="text-white/90 font-serif italic text-lg leading-relaxed text-justify">Había un joven que estaba pasando por uno de los momentos más difíciles de su vida... Una noche encontró una Biblia muy desgastada. Entendió que las oraciones de una madre nunca mueren.</p>
                         </div>
                     </div>
-
                     <div class="space-y-4 text-left">
-                        <h2 class="text-lg font-black text-slate-900 px-1 tracking-tight text-left">Tu Progreso Actual</h2>
-                        <div @click="view = 'plan_overview'" class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex gap-5 items-center cursor-pointer active:scale-[0.98] transition-all">
-                            <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center text-white shadow-lg shadow-blue-100 text-white">
-                                <i data-lucide="heart" class="w-8 h-8 fill-white"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="font-black text-slate-900 leading-tight text-lg tracking-tight">Mamá: Entre Altares y Algoritmos</h3>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase mt-1">Wilson Pareja C.</p>
-                                <div class="flex items-center gap-3 mt-4">
-                                    <div class="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden">
-                                        <div class="bg-blue-600 h-full transition-all duration-1000" :style="'width: ' + progress + '%'"></div>
-                                    </div>
-                                    <span class="text-[10px] font-black text-blue-600" x-text="progress + '%'"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="space-y-5 pb-8 text-left">
-                        <div class="flex justify-between items-end px-1">
-                            <h2 class="text-lg font-black text-slate-900 tracking-tight">Biblioteca LJ</h2>
-                            <button @click="view = 'discover'" class="text-[10px] font-black text-blue-600 uppercase tracking-widest">Ver todo</button>
-                        </div>
-                        <div class="flex gap-4 overflow-x-auto pb-6 no-scrollbar -mx-6 px-6">
-                            <template x-for="dev in otherDevotionals" :key="dev.title">
-                                <div @click="window.open(dev.url, '_blank')" class="min-w-[180px] bg-white rounded-[2rem] p-6 flex flex-col justify-between shadow-sm border border-slate-100 cursor-pointer active:scale-95 transition-all text-left">
-                                    <div class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center shadow-inner text-slate-600">
-                                        <i :data-lucide="dev.icon" class="w-6 h-6"></i>
-                                    </div>
-                                    <div class="mt-6 text-left">
-                                        <h4 class="text-sm font-black text-slate-900 leading-tight tracking-tight line-clamp-2" x-text="dev.title"></h4>
-                                        <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-2">La Casa de Juanita</p>
-                                    </div>
-                                </div>
-                            </template>
+                        <h2 class="text-lg font-black text-slate-900 px-1">Tu Progreso</h2>
+                        <div @click="view = 'plan_overview'" class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex gap-5 items-center cursor-pointer text-left">
+                            <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center text-white shadow-lg"><i data-lucide="heart" class="text-white fill-white"></i></div>
+                            <div class="flex-1 text-left"><h3 class="font-black text-slate-900 leading-tight">Mamá: Entre Altares y Algoritmos</h3><div class="flex items-center gap-3 mt-4"><div class="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden text-left"><div class="bg-blue-600 h-full transition-all" :style="'width: ' + progress + '%'"></div></div><span class="text-[10px] font-black text-blue-600" x-text="progress + '%'"></span></div></div>
                         </div>
                     </div>
                 </div>
             </div>
         </template>
 
-        <!-- Pantalla 4: Reading -->
+        <!-- PANTALLA: READING -->
         <template x-if="view === 'reading'">
             <div class="bg-white h-full flex flex-col animate-fade-in relative text-left">
-                <div class="px-6 pt-12 pb-5 flex justify-between items-center border-b border-slate-100 bg-white/95 backdrop-blur-md z-30 shrink-0 text-left">
-                    <button @click="view = 'plan_overview'" class="p-2 hover:bg-slate-100 rounded-2xl transition-colors text-slate-800"><i data-lucide="x" class="w-6 h-6"></i></button>
-                    <div class="text-center">
-                        <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">DÍA <span x-text="activeStep + 1"></span> DE 7</p>
-                        <div class="flex bg-slate-100 p-1 rounded-lg w-fit mx-auto">
-                            <button @click="bibleVersion = 'RVR1960'" :class="bibleVersion === 'RVR1960' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-2 py-1 text-[8px] font-black rounded transition-all">RVR</button>
-                            <button @click="bibleVersion = 'NTV'" :class="bibleVersion === 'NTV' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-2 py-1 text-[8px] font-black rounded transition-all">NTV</button>
-                        </div>
-                    </div>
-                    <i data-lucide="share-2" class="w-6 h-6 text-slate-300"></i>
+                <div class="px-6 pt-12 pb-5 flex justify-between items-center border-b border-slate-100 bg-white/95 backdrop-blur-md z-30 text-left">
+                    <button @click="view = 'plan_overview'" class="p-2 hover:bg-slate-100 rounded-2xl text-slate-800"><i data-lucide="x" class="w-6 h-6 text-slate-800"></i></button>
+                    <div class="text-center"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">DÍA <span x-text="activeStep + 1"></span> DE 7</p></div>
+                    <div class="flex bg-slate-100 p-1 rounded-lg"><button @click="bibleVersion = 'RVR1960'" :class="bibleVersion === 'RVR1960' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-2 py-1 text-[8px] font-black rounded">RVR</button><button @click="bibleVersion = 'NTV'" :class="bibleVersion === 'NTV' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-2 py-1 text-[8px] font-black rounded ml-1">NTV</button></div>
                 </div>
-
-                <div id="readingScroll" class="flex-1 overflow-y-auto text-left px-8 pt-8 pb-48 z-10 no-scrollbar">
-                    <h2 class="text-4xl font-black text-slate-900 mb-8 leading-[1.1] tracking-tighter" x-text="roadmap[activeStep].title"></h2>
-                    <p class="text-2xl text-slate-600 leading-relaxed font-medium mb-10 text-left" x-text="roadmap[activeStep].context"></p>
-                    
-                    <div class="p-10 bg-slate-900 rounded-[2.5rem] shadow-xl text-white mb-10 relative overflow-hidden text-left">
-                        <div class="absolute top-0 right-0 p-4 opacity-10 text-white"><i data-lucide="book-open" class="w-16 h-16"></i></div>
-                        <p class="text-3xl font-serif italic mb-6 relative z-10" x-text="bibleVersion === 'RVR1960' ? roadmap[activeStep].verse_rvr : roadmap[activeStep].verse_ntv"></p>
-                        <div class="w-10 h-1 bg-blue-500 mb-4 rounded-full"></div>
-                        <p class="text-[10px] font-black text-white/40 uppercase tracking-widest text-left" x-text="'— ' + roadmap[activeStep].ref"></p>
-                    </div>
-
-                    <div class="py-2 text-left">
-                        <p class="text-2xl font-black text-slate-900 mb-6" x-text="roadmap[activeStep].question"></p>
-                        <textarea x-model="reflections[activeStep]" class="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] p-8 text-xl min-h-[200px] outline-none no-scrollbar placeholder-slate-300" placeholder="Escribe lo que Dios pone en tu corazón..."></textarea>
-                    </div>
+                <div id="readingScroll" class="flex-1 overflow-y-auto px-8 pt-8 pb-48 z-10 no-scrollbar text-left">
+                    <h2 class="text-3xl font-black text-slate-900 mb-8" x-text="roadmap[activeStep].title"></h2>
+                    <p class="text-xl text-slate-600 leading-relaxed font-medium mb-10 text-justify" x-text="roadmap[activeStep].context"></p>
+                    <div class="p-10 bg-slate-900 rounded-[2.5rem] shadow-xl text-white mb-10 relative overflow-hidden text-left"><div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="book-open" class="w-16 h-16 text-white"></i></div><p class="text-2xl font-serif italic mb-6 relative z-10 text-justify" x-text="bibleVersion === 'RVR1960' ? roadmap[activeStep].verse_rvr : roadmap[activeStep].verse_ntv"></p><div class="w-10 h-1 bg-blue-500 mb-4 rounded-full"></div><p class="text-[10px] font-black text-white/40 uppercase tracking-widest text-left" x-text="'— ' + roadmap[activeStep].ref"></p></div>
+                    <div class="py-2 text-left"><p class="text-2xl font-black text-slate-900 mb-6" x-text="roadmap[activeStep].question"></p><textarea x-model="reflections[activeStep]" class="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] p-8 text-xl min-h-[200px] outline-none text-left" placeholder="Escribe aquí..."></textarea></div>
                 </div>
+                <div class="absolute bottom-[76px] left-0 w-full p-6 bg-gradient-to-t from-white via-white to-transparent z-40 text-center"><button @click="markStepComplete()" class="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-xl shadow-2xl active:scale-95 transition-all text-center"><span x-text="activeStep === 6 ? 'FINALIZAR' : 'SIGUIENTE'"></span></button></div>
+            </div>
+        </template>
 
-                <div class="absolute bottom-[76px] left-0 w-full p-6 bg-gradient-to-t from-white via-white to-transparent z-40 text-center">
-                    <button @click="markStepComplete()" class="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-xl shadow-2xl active:scale-95 transition-all hover:bg-blue-700">
-                        <span x-text="activeStep === 6 ? 'FINALIZAR PLAN' : 'SIGUIENTE DÍA'"></span>
-                    </button>
+        <!-- PANTALLA: BIBLIA -->
+        <template x-if="view === 'bible'">
+            <div class="bg-[#f4f5f7] h-full flex flex-col animate-fade-in overflow-y-auto pb-32 text-left no-scrollbar">
+                <div class="bg-white/80 backdrop-blur-md px-6 pt-12 pb-6 flex justify-between items-center sticky top-0 z-20 border-b border-slate-100/50"><div class="flex items-center gap-3 text-blue-600 text-left"><i data-lucide="book"></i><h2 class="text-2xl font-black text-slate-900 tracking-tighter text-left">Escrituras</h2></div><div class="flex bg-slate-100 p-1 rounded-lg"><button @click="bibleVersion = 'RVR1960'" :class="bibleVersion === 'RVR1960' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded transition-all">RVR</button><button @click="bibleVersion = 'NTV'" :class="bibleVersion === 'NTV' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded ml-1 transition-all">NTV</button></div></div>
+                <div class="p-6 space-y-6 text-left">
+                    <template x-for="step in roadmap"><div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 text-left"><p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2" x-text="step.subtitle"></p><p class="text-xl font-serif italic text-slate-800 mb-4 text-justify" x-text="bibleVersion === 'RVR1960' ? step.verse_rvr : step.verse_ntv"></p><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-left" x-text="'— ' + step.ref"></p></div></template>
                 </div>
             </div>
         </template>
 
-        <!-- Pantalla: Plan Overview -->
+        <!-- PANTALLA: DISCOVER -->
+        <template x-if="view === 'discover'">
+            <div class="h-full bg-[#f4f5f7] animate-fade-in overflow-y-auto pb-32 text-left no-scrollbar">
+                <div class="bg-white px-6 pt-12 pb-6 border-b border-slate-100 sticky top-0 z-20 flex justify-between items-center text-left"><h2 class="text-2xl font-black text-slate-900 tracking-tighter text-left">Biblioteca LJ</h2><button @click="view = 'home'" class="p-3 bg-slate-100 rounded-2xl hover:bg-slate-200 transition-colors text-slate-800"><i data-lucide="x" class="w-5 h-5 text-slate-800"></i></button></div>
+                <div class="p-6 space-y-4 text-left">
+                    <div class="flex gap-2 overflow-x-auto no-scrollbar py-1 text-left"><template x-for="cat in categories"><button @click="selectedCategory = cat" :class="selectedCategory === cat ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-100'" class="px-5 py-2.5 rounded-2xl text-xs font-black transition-all whitespace-nowrap border text-left" x-text="cat"></button></template></div>
+                    <div class="grid grid-cols-1 gap-4 text-left">
+                        <template x-for="dev in filteredPlans"><div @click="window.open(dev.url, '_blank')" class="bg-white p-5 rounded-[1.5rem] shadow-sm border border-slate-100 flex items-center gap-5 cursor-pointer hover:border-blue-200 active:scale-95 transition-all group text-left"><div :class="dev.color" class="w-14 h-14 rounded-[1.2rem] flex items-center justify-center shrink-0 shadow-inner text-left"><i :data-lucide="dev.icon" class="w-6 h-6 text-left"></i></div><div class="flex-1 text-left"><h4 class="font-black text-slate-900 text-lg leading-tight tracking-tight text-left" x-text="dev.title"></h4><p class="text-[9px] font-bold text-slate-400 uppercase mt-1 text-left">Wilson Pareja C.</p></div><i data-lucide="external-link" class="w-5 h-5 text-slate-200"></i></div></template>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- PANTALLA: PLAN OVERVIEW -->
         <template x-if="view === 'plan_overview'">
             <div class="h-full bg-white animate-fade-in overflow-y-auto pb-32 text-left no-scrollbar">
                 <div class="p-6 flex items-center gap-4 border-b border-slate-100 sticky top-0 bg-white z-20 text-left">
-                    <button @click="view = 'home'" class="p-2 hover:bg-slate-50 rounded-2xl transition-colors text-slate-800"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
-                    <h2 class="font-black text-slate-900 text-xl tracking-tight">Detalles del Plan</h2>
+                    <button @click="view = 'home'" class="p-2 hover:bg-slate-50 rounded-2xl text-slate-800"><i data-lucide="chevron-left" class="w-6 h-6 text-slate-800"></i></button>
+                    <h2 class="font-black text-slate-900 text-xl tracking-tight text-left">Detalles del Plan</h2>
                 </div>
                 <div class="p-8 text-left">
-                    <div class="flex gap-6 mb-12">
-                        <div class="w-24 h-24 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl text-white">
-                            <i data-lucide="heart" class="w-10 h-10 fill-white"></i>
-                        </div>
-                        <div class="flex-1 py-2 text-left">
-                            <h1 class="text-3xl font-black text-slate-900 leading-tight">Mamá: Entre Altares y Algoritmos</h1>
-                            <p class="text-slate-400 font-bold mt-2 tracking-widest uppercase text-[10px]">Wilson Pareja C.</p>
-                        </div>
+                    <div class="flex gap-6 mb-12 text-left">
+                        <div class="w-24 h-24 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl text-white"><i data-lucide="heart" class="text-white fill-white"></i></div>
+                        <div class="flex-1 py-2 text-left"><h1 class="text-3xl font-black text-slate-900 leading-tight tracking-tight text-left">Mamá: Entre Altares y Algoritmos</h1><p class="text-slate-400 font-bold mt-2 tracking-widest uppercase text-[10px] text-left">Wilson Pareja C.</p></div>
                     </div>
                     <div class="space-y-4 text-left">
-                        <template x-for="(step, index) in roadmap" :key="index">
-                            <div @click="activeStep = index; view = 'reading'" class="flex items-center gap-4 p-5 border-b border-slate-50 cursor-pointer hover:bg-slate-50 rounded-[1.5rem] transition-all group">
-                                <div :class="completedSteps.includes(index) ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-400'" class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm">
-                                    <span x-text="completedSteps.includes(index) ? '✓' : (index + 1)"></span>
-                                </div>
-                                <div class="flex-1">
-                                    <p class="font-black text-slate-900 text-lg leading-none" x-text="step.title"></p>
-                                    <p class="text-[9px] text-slate-400 uppercase font-bold mt-1" x-text="step.subtitle"></p>
-                                </div>
-                                <i data-lucide="play-circle" class="w-6 h-6 text-slate-200 group-hover:text-blue-500"></i>
-                            </div>
-                        </template>
+                        <template x-for="(step, index) in roadmap"><div @click="activeStep = index; view = 'reading'" class="flex items-center gap-4 p-5 border-b border-slate-50 cursor-pointer hover:bg-slate-50 rounded-[1.5rem] transition-all group text-left"><div :class="completedSteps.includes(index) ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-400'" class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm text-left"><span x-text="completedSteps.includes(index) ? '✓' : (index + 1)"></span></div><div class="flex-1 text-left"><p class="font-black text-slate-900 text-lg leading-none text-left" x-text="step.title"></p><p class="text-[9px] text-slate-400 uppercase font-bold mt-1 text-left" x-text="step.subtitle"></p></div><i data-lucide="play-circle" class="w-6 h-6 text-slate-200 group-hover:text-blue-500 text-left"></i></div></template>
                     </div>
                 </div>
             </div>
         </template>
 
-        <!-- Navegación Inferior Global -->
-        <nav x-show="['home', 'plan_overview', 'reading', 'discover', 'bible'].includes(view)" class="absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur-xl border-t border-slate-100/50 px-8 py-5 flex justify-between items-center z-50 text-center">
-            <div @click="view = 'home'" class="flex flex-col items-center gap-1.5 cursor-pointer transition-all" :class="view === 'home' ? 'text-slate-900' : 'text-slate-300'">
-                <div class="relative text-center"><i data-lucide="heart" class="w-6 h-6" :class="view === 'home' ? 'fill-current scale-110' : ''"></i><template x-if="view === 'home'"><div class="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full"></div></template></div>
-                <span class="text-[9px] font-black uppercase tracking-widest">Hoy</span>
+        <!-- PANTALLA: ÉXITO -->
+        <template x-if="view === 'success'">
+            <div class="h-full flex flex-col items-center justify-center p-10 text-center animate-fade-in bg-white text-center">
+                <div class="w-40 h-40 bg-yellow-400 rounded-[3rem] flex items-center justify-center shadow-2xl shadow-yellow-100 animate-bounce mb-8 shrink-0 text-center"><i data-lucide="trophy" class="w-20 h-20 text-white"></i></div>
+                <h2 class="text-4xl font-black text-slate-900 mb-4 tracking-tighter text-center leading-none">¡Gloria a Dios!</h2>
+                <p class="text-xl text-slate-500 mb-10 leading-relaxed text-center px-4 text-justify" x-text="userName.split(' ')[0] + ', has completado este viaje espiritual de la mano de La Casa de Juanita.'"></p>
+                <button @click="view = 'home'" class="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-xl shadow-2xl active:scale-95 transition-all text-center">VOLVER AL INICIO</button>
             </div>
-            <div @click="view = 'bible'" class="flex flex-col items-center gap-1.5 cursor-pointer transition-all" :class="view === 'bible' ? 'text-slate-900' : 'text-slate-300'">
-                <i data-lucide="book" class="w-6 h-6 text-center"></i>
-                <span class="text-[9px] font-black uppercase tracking-widest text-center">Biblia</span>
-            </div>
-            <div @click="view = 'discover'" class="flex flex-col items-center gap-1.5 cursor-pointer transition-all" :class="view === 'discover' ? 'text-slate-900' : 'text-slate-300'">
-                <i data-lucide="compass" class="w-6 h-6 text-center"></i>
-                <span class="text-[9px] font-black uppercase tracking-widest text-center">Planes</span>
-            </div>
-            <div class="flex flex-col items-center gap-1.5 text-slate-200 cursor-not-allowed opacity-50 text-center">
-                <i data-lucide="users" class="w-6 h-6 text-center text-slate-200"></i>
-                <span class="text-[9px] font-black uppercase tracking-widest text-center">Amigos</span>
-            </div>
-            <div class="flex flex-col items-center gap-1.5 text-slate-200 cursor-not-allowed opacity-50 text-center">
-                <i data-lucide="more-horizontal" class="w-6 h-6 text-center text-slate-200"></i>
-                <span class="text-[9px] font-black uppercase tracking-widest text-center">Más</span>
-            </div>
+        </template>
+
+        <!-- NAV INFERIOR -->
+        <nav x-show="['home', 'reading', 'bible', 'discover', 'plan_overview'].includes(view)" class="absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur-xl border-t border-slate-100/50 px-8 py-5 flex justify-between items-center z-50 text-center">
+            <div @click="view = 'home'" class="flex flex-col items-center gap-1.5 cursor-pointer text-center" :class="view === 'home' ? 'text-slate-900' : 'text-slate-300'"><i data-lucide="heart" :class="view === 'home' ? 'fill-current scale-110' : ''"></i><span class="text-[9px] font-black uppercase tracking-widest text-center">Hoy</span></div>
+            <div @click="view = 'bible'" class="flex flex-col items-center gap-1.5 cursor-pointer text-center" :class="view === 'bible' ? 'text-slate-900' : 'text-slate-300'"><i data-lucide="book"></i><span class="text-[9px] font-black uppercase tracking-widest text-center">Biblia</span></div>
+            <div @click="view = 'discover'" class="flex flex-col items-center gap-1.5 cursor-pointer text-center" :class="view === 'discover' ? 'text-slate-900' : 'text-slate-300'"><i data-lucide="compass"></i><span class="text-[9px] font-black uppercase tracking-widest text-center">Planes</span></div>
+            <div class="flex flex-col items-center gap-1.5 text-slate-200 cursor-not-allowed opacity-50 text-center"><i data-lucide="users"></i><span class="text-[9px] font-black uppercase tracking-widest text-center text-slate-200">Amigos</span></div>
+            <div class="flex flex-col items-center gap-1.5 text-slate-200 cursor-not-allowed opacity-50 text-center"><i data-lucide="more-horizontal"></i><span class="text-[9px] font-black uppercase tracking-widest text-center text-slate-200">Más</span></div>
         </nav>
 
         <div class="hidden sm:block absolute top-0 left-1/2 -translate-x-1/2 w-36 h-7 bg-slate-50/50 backdrop-blur-md rounded-b-[1.5rem] z-[60] border-x border-b border-slate-100 text-center"></div>
