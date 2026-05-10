@@ -187,7 +187,7 @@
                         const user = JSON.parse(savedUser);
                         this.userName = user.name;
                         this.userEmail = user.email;
-                        this.view = 'home';
+                        this.view = 'video_intro';
                     }
                     this.refreshUI();
                     this.$watch('view', () => this.refreshUI());
@@ -197,9 +197,22 @@
                 refreshUI() {
                     this.$nextTick(() => {
                         lucide.createIcons();
+                        // Reset scroll de lectura
+                        const scrollArea = document.getElementById('readingScroll');
+                        if (scrollArea) {
+                            scrollArea.scrollTo({ top: 0, behavior: 'instant' });
+                        }
+                        // Reset scroll general
+                        const mainScroll = document.querySelector('.overflow-y-auto');
+                        if (mainScroll && this.view !== 'reading') {
+                            mainScroll.scrollTo({ top: 0, behavior: 'instant' });
+                        }
+                    });
+                    // Fallback para navegadores lentos
+                    setTimeout(() => {
                         const scrollArea = document.getElementById('readingScroll');
                         if (scrollArea) scrollArea.scrollTop = 0;
-                    });
+                    }, 50);
                 },
 
                 get filteredPlans() {
@@ -225,7 +238,7 @@
                         if (data.status === 200) {
                             this.userName = data.name;
                             localStorage.setItem('juanita_user', JSON.stringify({ name: data.name, email: data.email }));
-                            this.view = 'home';
+                            this.view = 'video_intro';
                         } else {
                             alert(data.message || "Error al iniciar sesión");
                         }
@@ -420,20 +433,35 @@
             </div>
         </template>
 
-        <!-- PANTALLA: INTRO VIDEO -->
+        <!-- PANTALLA: BIENVENIDA SEMANAL (CON VÍDEO) -->
         <template x-if="view === 'video_intro'">
             <div class="relative h-full w-full bg-black flex flex-col animate-fade-in overflow-hidden">
-                <video autoplay loop :muted="isMuted" playsinline class="absolute inset-0 w-full h-full object-cover opacity-60"><source src="https://i.imgur.com/XOKwR06.mp4" type="video/mp4"></video>
-                <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black"></div>
-                <div class="relative z-10 flex flex-col h-full p-10 text-white text-left">
-                    <div class="mt-12 space-y-2">
-                        <img src="https://i.imgur.com/dDYOrEm.png" alt="LJ" class="w-20 mb-4 brightness-200">
-                        <h1 class="text-5xl font-black leading-[0.9]">Mamá:<br>Entre Altares y Algoritmos</h1>
+                <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-50" id="introVideo"><source src="https://i.imgur.com/XOKwR06.mp4" type="video/mp4"></video>
+                <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black"></div>
+                
+                <div class="relative z-10 flex flex-col h-full p-10 text-white">
+                    <div class="flex justify-between items-start mt-12">
+                        <img src="https://i.imgur.com/dDYOrEm.png" alt="LJ" class="w-20 brightness-200">
+                        <button @click="isMuted = !isMuted; document.getElementById('introVideo').muted = isMuted" class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 transition-all hover:bg-white/20">
+                            <i :data-lucide="isMuted ? 'volume-x' : 'volume-2'" class="w-5 h-5 text-white"></i>
+                        </button>
                     </div>
-                    <div class="mt-auto space-y-6 text-left">
-                        <p class="text-xl font-serif italic text-white/90 text-justify">"La fe no aparece de la nada; es un ecosistema que se cultiva en el hogar."</p>
+                    
+                    <div class="mt-8">
+                        <p class="text-[#c68b6d] font-black uppercase tracking-[0.3em] text-[10px] mb-2">Bienvenida a Casa</p>
+                        <h1 class="text-5xl font-black leading-none mb-6">¡Hola, <span x-text="userName.split(' ')[0]"></span>!</h1>
+                        <p class="text-xl text-white/80 leading-relaxed font-serif italic text-justify">Esta semana te invitamos a un viaje especial de renovación y fe.</p>
+                    </div>
+
+                    <div class="mt-auto space-y-8 pb-10">
+                        <div class="bg-white/10 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/20">
+                            <p class="text-[9px] font-black uppercase tracking-widest text-[#c68b6d] mb-2">Devocional Destacado</p>
+                            <h2 class="text-2xl font-black leading-tight mb-2">Mamá: Entre Altares y Algoritmos</h2>
+                            <p class="text-sm text-white/60">Un recorrido de 7 días para redescubrir tu propósito.</p>
+                        </div>
+
                         <button @click="view = 'home'" class="w-full py-6 bg-[#c68b6d] text-white rounded-[2rem] font-black shadow-2xl shadow-black/40 flex items-center justify-center gap-4 group active:scale-95 transition-all">
-                            COMENZAR VIAJE 
+                            EMPEZAR SEMANA 
                             <i data-lucide="arrow-right" class="group-hover:translate-x-2 transition-transform"></i>
                         </button>
                     </div>
@@ -642,7 +670,7 @@
                         <div class="absolute left-11 top-10 bottom-10 w-0.5 bg-slate-100 -z-10"></div>
                         
                         <template x-for="(step, index) in roadmap">
-                            <div @click="index <= getNextStep() || completedSteps.includes(index) ? (activeStep = index, view = 'reading') : null" 
+                            <div @click="if(index <= getNextStep() || completedSteps.includes(index)) { activeStep = index; view = 'reading'; refreshUI(); }" 
                                  :class="{
                                     'opacity-40 grayscale pointer-events-none': index > getNextStep() && getNextStep() !== -1,
                                     'border-[#c68b6d] ring-4 ring-[#c68b6d]/5 scale-[1.02] shadow-xl': index === getNextStep(),
