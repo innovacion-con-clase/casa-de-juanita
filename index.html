@@ -12,14 +12,58 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Lora:italic@400;700&display=swap" rel="stylesheet">
     
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        :root {
+            --primary: #c68b6d;
+            --primary-dark: #a36a4d;
+            --bg-warm: #fdfcf9;
+            --text-main: #1e293b;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f1ede8; color: var(--text-main); }
         .font-serif { font-family: 'Lora', serif; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         [x-cloak] { display: none !important; }
+
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); }
+        
+        .input-elegant {
+            width: 100%;
+            padding: 1rem 1.25rem 1rem 3.25rem;
+            background-color: white;
+            border: 1px solid #f1f5f9;
+            border-radius: 1.25rem;
+            outline: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            color: #1e293b;
+        }
+        .input-elegant:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(198, 139, 109, 0.08);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 1.125rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            font-weight: 900;
+            font-size: 0.8rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border-radius: 1.25rem;
+            box-shadow: 0 10px 20px -5px rgba(198, 139, 109, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 15px 30px -5px rgba(198, 139, 109, 0.5); }
+
         @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fade-in 0.4s ease-out forwards; }
-        .text-justify { text-align: justify; text-justify: inter-word; }
+        @keyframes scale-up { from { transform: scale(0.98); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .animate-fade-in { animation: fade-in 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .animate-scale-up { animation: scale-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
     </style>
 
     <script>
@@ -30,6 +74,7 @@
             Alpine.data('appData', () => ({
                 view: 'auth',
                 authStep: 'input',
+                authMode: 'login', // 'login' o 'register'
                 userName: '',
                 userEmail: '',
                 userPassword: '',
@@ -42,6 +87,7 @@
                 bibleVersion: 'NTV',
                 selectedCategory: 'Todos',
                 progress: 0,
+                expandedBibleSteps: [],
                 categories: ["Todos", "Fe", "Vida", "Propósito", "Relaciones"],
                 
                 // Contenido del Devocional (Textos Justificados)
@@ -116,10 +162,18 @@
                     { title: "La Ciencia de Atrapar el Viento", url: "https://innovacion-con-clase.github.io/la-ciencia-de-atrapar-el-viento/", icon: 'wind', color: "bg-blue-50 text-blue-600", cat: "Fe" },
                     { title: "Ordena tus Letras", url: "https://innovacion-con-clase.github.io/Ordena-tus-Letras/", icon: 'pen-tool', color: "bg-amber-50 text-amber-600", cat: "Propósito" },
                     { title: "ADN de Rescatista", url: "https://innovacion-con-clase.github.io/ADN-de-Rescatista/", icon: 'shield', color: "bg-red-50 text-red-600", cat: "Vida" },
-                    { title: "La mesa esta servida", url: "https://innovacion-con-clase.github.io/la-mesa-esta-servida/", icon: 'table', color: "bg-stone-50 text-stone-700", cat: "Vida" }
+                    { title: "La mesa esta servida", url: "https://innovacion-con-clase.github.io/la-mesa-esta-servida/", icon: 'table', color: "bg-stone-50 text-stone-700", cat: "Vida" },
+                    { title: "Sanando el Corazón", url: "#", icon: 'heart', color: "bg-rose-50 text-rose-500", cat: "Relaciones" }
                 ],
 
                 init() {
+                    const savedUser = localStorage.getItem('juanita_user');
+                    if (savedUser) {
+                        const user = JSON.parse(savedUser);
+                        this.userName = user.name;
+                        this.userEmail = user.email;
+                        this.view = 'home';
+                    }
                     this.refreshUI();
                     this.$watch('view', () => this.refreshUI());
                     this.$watch('selectedCategory', () => this.refreshUI());
@@ -135,6 +189,38 @@
 
                 get filteredPlans() {
                     return this.selectedCategory === 'Todos' ? this.otherDevotionals : this.otherDevotionals.filter(p => p.cat === this.selectedCategory);
+                },
+
+                async login() {
+                    if (!this.userEmail || !this.userPassword) {
+                        alert("Ingresa tus credenciales.");
+                        return;
+                    }
+                    this.isSubmitting = true;
+                    try {
+                        const res = await fetch(APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ 
+                                action: 'login', 
+                                email: this.userEmail, 
+                                password: this.userPassword 
+                            })
+                        });
+                        const data = await res.json();
+                        if (data.status === 200) {
+                            this.userName = data.name;
+                            localStorage.setItem('juanita_user', JSON.stringify({ name: data.name, email: data.email }));
+                            this.view = 'home';
+                        } else {
+                            alert(data.message || "Error al iniciar sesión");
+                        }
+                    } catch (e) {
+                        // Simulación para propósitos de demo si el script no responde
+                        console.error(e);
+                        alert("Error de conexión. Verifica tus datos.");
+                    } finally {
+                        this.isSubmitting = false;
+                    }
                 },
 
                 async sendCode() {
@@ -162,14 +248,75 @@
                     if (this.verificationCode.length < 4) return;
                     this.isSubmitting = true;
                     try {
-                        // Aquí enviarías la confirmación final al script
+                        const res = await fetch(APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ 
+                                action: 'register', 
+                                name: this.userName, 
+                                email: this.userEmail, 
+                                password: this.userPassword,
+                                code: this.verificationCode 
+                            })
+                        });
+                        const data = await res.json();
+                        if (data.status === 200) {
+                            localStorage.setItem('juanita_user', JSON.stringify({ name: this.userName, email: this.userEmail }));
+                            this.view = 'video_intro';
+                        } else {
+                            alert(data.message || "Código inválido");
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        // Demo fallback
+                        localStorage.setItem('juanita_user', JSON.stringify({ name: this.userName, email: this.userEmail }));
                         this.view = 'video_intro';
                     } finally {
                         this.isSubmitting = false;
                     }
                 },
 
-                markStepComplete() {
+                toggleBibleStep(index) {
+                    if (this.expandedBibleSteps.includes(index)) {
+                        this.expandedBibleSteps = this.expandedBibleSteps.filter(i => i !== index);
+                    } else {
+                        this.expandedBibleSteps.push(index);
+                    }
+                },
+
+                getNextStep() {
+                    for (let i = 0; i < this.roadmap.length; i++) {
+                        if (!this.completedSteps.includes(i)) return i;
+                    }
+                    return -1;
+                },
+
+                logout() {
+                    localStorage.removeItem('juanita_user');
+                    this.userName = '';
+                    this.userEmail = '';
+                    this.userPassword = '';
+                    this.authMode = 'login';
+                    this.authStep = 'input';
+                    this.view = 'auth';
+                },
+
+                async markStepComplete() {
+                    const content = this.reflections[this.activeStep];
+                    if (content) {
+                        try {
+                            fetch(APPS_SCRIPT_URL, {
+                                method: 'POST',
+                                mode: 'no-cors',
+                                body: JSON.stringify({ 
+                                    action: 'feedback', 
+                                    email: this.userEmail, 
+                                    stepIndex: this.activeStep, 
+                                    content: content 
+                                })
+                            });
+                        } catch (e) { console.error("Error saving feedback:", e); }
+                    }
+
                     if (!this.completedSteps.includes(this.activeStep)) {
                         this.completedSteps.push(this.activeStep);
                         this.progress = Math.round((this.completedSteps.length / this.roadmap.length) * 100);
@@ -186,40 +333,70 @@
 
     <div x-data="appData" x-cloak class="w-full max-w-md bg-white h-screen sm:h-[880px] sm:rounded-[3.5rem] shadow-2xl flex flex-col relative overflow-hidden border border-slate-100">
         
-        <!-- PANTALLA: REGISTRO -->
         <template x-if="view === 'auth'">
-            <div class="h-full w-full bg-[#f4f5f7] flex flex-col items-center justify-center p-8 animate-fade-in overflow-y-auto no-scrollbar">
-                <img src="https://i.imgur.com/dDYOrEm.png" alt="LJ" class="w-24 mb-6">
+            <div class="h-full w-full bg-[#fdfcf9] flex flex-col items-center justify-between p-10 animate-fade-in overflow-y-auto no-scrollbar relative">
+                <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');"></div>
                 
-                <div x-show="authStep === 'input'" class="w-full text-center">
-                    <h1 class="text-2xl font-black text-slate-900 mb-1">Crear Perfil</h1>
-                    <p class="text-slate-500 mb-8 text-sm">Recibirás un código de acceso en tu correo.</p>
-                    <form @submit.prevent="sendCode()" class="space-y-3">
-                        <div class="relative text-left">
-                            <i data-lucide="user" class="absolute left-4 top-4 text-slate-400 w-4 h-4"></i>
-                            <input type="text" required placeholder="Nombre" x-model="userName" class="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none">
-                        </div>
-                        <div class="relative text-left">
-                            <i data-lucide="mail" class="absolute left-4 top-4 text-slate-400 w-4 h-4"></i>
-                            <input type="email" required placeholder="Correo electrónico" x-model="userEmail" class="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none">
-                        </div>
-                        <div class="relative text-left">
-                            <i data-lucide="lock" class="absolute left-4 top-4 text-slate-400 w-4 h-4"></i>
-                            <input type="password" required placeholder="Contraseña" x-model="userPassword" class="w-full pl-10 pr-4 py-3.5 bg-white border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none">
-                        </div>
-                        <button type="submit" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black shadow-lg">OBTENER CÓDIGO</button>
-                    </form>
+                <div class="w-full flex flex-col items-center pt-10">
+                    <div class="mb-12 relative">
+                        <div class="absolute -inset-8 bg-[#c68b6d]/10 blur-3xl rounded-full"></div>
+                        <img src="https://i.imgur.com/dDYOrEm.png" alt="LJ" class="w-32 relative z-10">
+                    </div>
+                    
+                    <div x-show="authStep === 'input'" class="w-full text-center animate-scale-up">
+                        <h1 class="text-3xl font-black text-slate-900 mb-2" x-text="authMode === 'login' ? 'Bienvenida de nuevo' : 'Bienvenida a Casa'"></h1>
+                        <p class="text-slate-500 mb-10 text-sm" x-text="authMode === 'login' ? 'Nos alegra verte otra vez.' : 'Crea tu perfil para comenzar este viaje de fe.'"></p>
+                        
+                        <form @submit.prevent="authMode === 'login' ? login() : sendCode()" class="space-y-5 px-4">
+                            <div x-show="authMode === 'register'" x-transition class="relative">
+                                <div class="absolute left-5 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                                    <i data-lucide="user" class="text-slate-300 w-5 h-5 transition-colors group-focus-within:text-[#c68b6d]"></i>
+                                </div>
+                                <input type="text" :required="authMode === 'register'" placeholder="Nombre completo" x-model="userName" class="input-elegant">
+                            </div>
+                            <div class="relative group">
+                                <div class="absolute left-5 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                                    <i data-lucide="mail" class="text-slate-300 w-5 h-5 transition-colors group-focus-within:text-[#c68b6d]"></i>
+                                </div>
+                                <input type="email" required placeholder="Correo electrónico" x-model="userEmail" class="input-elegant">
+                            </div>
+                            <div class="relative group">
+                                <div class="absolute left-5 top-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-none">
+                                    <i data-lucide="lock" class="text-slate-300 w-5 h-5 transition-colors group-focus-within:text-[#c68b6d]"></i>
+                                </div>
+                                <input type="password" required placeholder="Contraseña" x-model="userPassword" class="input-elegant">
+                            </div>
+                            <div class="pt-2">
+                                <button type="submit" class="btn-primary">
+                                    <span x-show="!isSubmitting" x-text="authMode === 'login' ? 'ENTRAR AHORA' : 'OBTENER CÓDIGO'"></span>
+                                    <div x-show="isSubmitting" class="flex justify-center items-center gap-1">
+                                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-bounce"></div>
+                                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                                        <div class="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:0.4s]"></div>
+                                    </div>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div x-show="authStep === 'verify'" class="w-full text-center animate-scale-up">
+                        <h1 class="text-3xl font-black text-slate-900 mb-2">Verifica tu Correo</h1>
+                        <p class="text-slate-500 mb-10 text-sm">Ingresa el código enviado a <br><b class="text-slate-900" x-text="userEmail"></b></p>
+                        <form @submit.prevent="verifyAndRegister()" class="space-y-6">
+                            <div class="flex justify-center">
+                                <input type="text" maxlength="4" required placeholder="0000" x-model="verificationCode" class="w-48 text-center text-4xl font-black py-5 bg-white border border-slate-100 rounded-[2rem] tracking-[12px] outline-none focus:border-[#c68b6d] focus:ring-4 focus:ring-[#c68b6d]/5 shadow-sm">
+                            </div>
+                            <button type="submit" class="btn-primary">VERIFICAR Y ACCEDER</button>
+                        </form>
+                    </div>
                 </div>
 
-                <div x-show="authStep === 'verify'" class="w-full text-center">
-                    <h1 class="text-2xl font-black text-slate-900 mb-1">Verificar Correo</h1>
-                    <p class="text-slate-500 mb-8 text-sm">Ingresa el código enviado a <br><b x-text="userEmail"></b></p>
-                    <form @submit.prevent="verifyAndRegister()" class="space-y-4">
-                        <input type="text" maxlength="4" required placeholder="0000" x-model="verificationCode" class="w-32 text-center text-3xl font-black py-4 bg-white border-2 border-slate-100 rounded-2xl tracking-[10px] outline-none focus:border-blue-500">
-                        <button type="submit" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-black shadow-lg">ACCEDER</button>
-                        <button @click="authStep = 'input'" type="button" class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-4">Cambiar datos</button>
-                    </form>
+                <div x-show="authStep === 'input'" class="w-full pb-10 text-center animate-fade-in">
+                    <p class="text-slate-400 text-sm mb-4" x-text="authMode === 'login' ? '¿Aún no tienes cuenta?' : '¿Ya eres parte de la casa?'"></p>
+                    <button @click="authMode = authMode === 'login' ? 'register' : 'login'" class="text-[#c68b6d] font-black tracking-widest text-xs uppercase hover:underline" x-text="authMode === 'login' ? 'CREAR CUENTA NUEVA' : 'INICIAR SESIÓN'"></button>
                 </div>
+                
+                <button x-show="authStep === 'verify'" @click="authStep = 'input'" type="button" class="text-xs font-black text-[#c68b6d] uppercase tracking-widest mb-10 hover:underline">Corregir mis datos</button>
             </div>
         </template>
 
@@ -235,7 +412,10 @@
                     </div>
                     <div class="mt-auto space-y-6 text-left">
                         <p class="text-xl font-serif italic text-white/90 text-justify">"La fe no aparece de la nada; es un ecosistema que se cultiva en el hogar."</p>
-                        <button @click="view = 'home'" class="w-full py-5 bg-white text-black rounded-3xl font-black shadow-2xl flex items-center justify-center gap-3">COMENZAR <i data-lucide="arrow-right"></i></button>
+                        <button @click="view = 'home'" class="w-full py-6 bg-[#c68b6d] text-white rounded-[2rem] font-black shadow-2xl shadow-black/40 flex items-center justify-center gap-4 group active:scale-95 transition-all">
+                            COMENZAR VIAJE 
+                            <i data-lucide="arrow-right" class="group-hover:translate-x-2 transition-transform"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -243,27 +423,46 @@
 
         <!-- PANTALLA: HOME -->
         <template x-if="view === 'home'">
-            <div class="bg-[#f4f5f7] h-full flex flex-col animate-fade-in overflow-y-auto pb-36 text-left no-scrollbar">
-                <div class="bg-white/80 backdrop-blur-md px-6 pt-12 pb-6 flex justify-between items-center sticky top-0 z-20 border-b border-slate-100/50">
-                    <div class="flex items-center gap-3 text-left">
-                        <div class="w-10 h-10 rounded-2xl bg-[#1c1c1c] shadow-lg flex items-center justify-center text-white font-black text-[10px]">LJ</div>
-                        <p class="text-xl font-black text-slate-900" x-text="'Hola, ' + userName.split(' ')[0]"></p>
-                    </div>
-                    <button @click="view = 'discover'" class="p-3 bg-slate-100 rounded-2xl text-slate-600"><i data-lucide="search"></i></button>
-                </div>
-                <div class="p-6 space-y-10">
-                    <div class="space-y-4">
-                        <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest text-left">Historia del Día</h2>
-                        <div class="bg-slate-900 rounded-[2.5rem] shadow-2xl p-8 space-y-6 text-left">
-                            <div class="flex items-center gap-3 text-orange-400 font-black text-[10px] uppercase text-left"><i data-lucide="book-marked" class="w-4 h-4 text-orange-400"></i> La Biblia de la Abuela</div>
-                            <p class="text-white/90 font-serif italic text-lg leading-relaxed text-justify">Había un joven que estaba pasando por uno de los momentos más difíciles de su vida... Una noche encontró una Biblia muy desgastada. Entendió que las oraciones de una madre nunca mueren.</p>
+            <div class="bg-[#fdfcf9] h-full flex flex-col animate-fade-in overflow-y-auto pb-36 no-scrollbar">
+                <div class="glass px-8 pt-14 pb-8 flex justify-between items-center sticky top-0 z-20">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-[#c68b6d] shadow-xl shadow-[#c68b6d]/20 flex items-center justify-center text-white font-black text-xs">LJ</div>
+                        <div>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Bienvenida</p>
+                            <p class="text-2xl font-black text-slate-900 tracking-tight" x-text="userName.split(' ')[0]"></p>
                         </div>
                     </div>
-                    <div class="space-y-4 text-left">
-                        <h2 class="text-lg font-black text-slate-900 px-1">Tu Progreso</h2>
-                        <div @click="view = 'plan_overview'" class="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex gap-5 items-center cursor-pointer text-left">
-                            <div class="w-16 h-16 bg-blue-600 rounded-3xl flex items-center justify-center text-white shadow-lg"><i data-lucide="heart" class="text-white fill-white"></i></div>
-                            <div class="flex-1 text-left"><h3 class="font-black text-slate-900 leading-tight">Mamá: Entre Altares y Algoritmos</h3><div class="flex items-center gap-3 mt-4"><div class="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden text-left"><div class="bg-blue-600 h-full transition-all" :style="'width: ' + progress + '%'"></div></div><span class="text-[10px] font-black text-blue-600" x-text="progress + '%'"></span></div></div>
+                    <button @click="view = 'discover'" class="p-4 bg-white border border-slate-100 rounded-2xl text-slate-600 shadow-sm hover:shadow-md transition-all"><i data-lucide="search" class="w-5 h-5"></i></button>
+                </div>
+
+                <div class="px-8 py-10 space-y-12">
+                    <!-- Historia Destacada -->
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between px-1">
+                            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Historia del Día</h2>
+                            <i data-lucide="sparkles" class="w-4 h-4 text-[#c68b6d]"></i>
+                        </div>
+                        <div class="bg-[#1e293b] rounded-[3rem] shadow-2xl shadow-slate-900/20 p-10 relative overflow-hidden group">
+                            <div class="absolute -top-12 -right-12 w-40 h-40 bg-[#c68b6d]/10 rounded-full blur-3xl group-hover:bg-[#c68b6d]/20 transition-all duration-700"></div>
+                            <div class="flex items-center gap-3 text-[#c68b6d] font-black text-[11px] uppercase tracking-widest mb-6"><i data-lucide="book-marked" class="w-4 h-4"></i> La Biblia de la Abuela</div>
+                            <p class="text-white/90 font-serif italic text-xl leading-relaxed text-justify mb-2">Había un joven que, abrumado por las presiones de un mundo acelerado, sentía que su fe se desvanecía. Una noche encontró la vieja Biblia de su abuela, llena de notas en los márgenes. Al leerlas, descubrió que ella había orado por él décadas antes de que naciera. Entendió entonces que el legado de una madre no se mide en algoritmos, sino en la eternidad de sus oraciones que nunca mueren.</p>
+                        </div>
+                    </div>
+
+                    <!-- Progreso -->
+                    <div class="space-y-6">
+                        <h2 class="text-xl font-black text-slate-900 px-1 tracking-tight">Tu Crecimiento</h2>
+                        <div @click="view = 'plan_overview'" class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 flex gap-6 items-center cursor-pointer hover:shadow-xl hover:shadow-[#c68b6d]/5 hover:border-[#c68b6d]/20 transition-all duration-500 group">
+                            <div class="w-20 h-20 bg-gradient-to-br from-[#c68b6d] to-[#a36a4d] rounded-[2rem] flex items-center justify-center text-white shadow-lg shadow-[#c68b6d]/30 group-hover:scale-105 transition-transform duration-500"><i data-lucide="heart" class="w-8 h-8 fill-white"></i></div>
+                            <div class="flex-1">
+                                <h3 class="font-black text-slate-900 text-lg leading-tight mb-4 group-hover:text-[#c68b6d] transition-colors">Mamá: Entre Altares y Algoritmos</h3>
+                                <div class="flex items-center gap-4">
+                                    <div class="flex-1 bg-slate-50 h-2.5 rounded-full overflow-hidden">
+                                        <div class="bg-[#c68b6d] h-full transition-all duration-1000 ease-out" :style="'width: ' + progress + '%'"></div>
+                                    </div>
+                                    <span class="text-xs font-black text-[#c68b6d]" x-text="progress + '%'"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -272,40 +471,118 @@
 
         <!-- PANTALLA: READING -->
         <template x-if="view === 'reading'">
-            <div class="bg-white h-full flex flex-col animate-fade-in relative text-left">
-                <div class="px-6 pt-12 pb-5 flex justify-between items-center border-b border-slate-100 bg-white/95 backdrop-blur-md z-30 text-left">
-                    <button @click="view = 'plan_overview'" class="p-2 hover:bg-slate-100 rounded-2xl text-slate-800"><i data-lucide="x" class="w-6 h-6 text-slate-800"></i></button>
-                    <div class="text-center"><p class="text-[9px] font-black text-slate-400 uppercase tracking-widest text-center">DÍA <span x-text="activeStep + 1"></span> DE 7</p></div>
-                    <div class="flex bg-slate-100 p-1 rounded-lg"><button @click="bibleVersion = 'RVR1960'" :class="bibleVersion === 'RVR1960' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-2 py-1 text-[8px] font-black rounded">RVR</button><button @click="bibleVersion = 'NTV'" :class="bibleVersion === 'NTV' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-2 py-1 text-[8px] font-black rounded ml-1">NTV</button></div>
+            <div class="bg-[#fdfcf9] h-full flex flex-col animate-fade-in relative">
+                <div class="px-8 pt-14 pb-6 flex justify-between items-center glass z-30">
+                    <button @click="view = 'plan_overview'" class="p-3 hover:bg-white rounded-2xl text-slate-800 transition-colors shadow-sm"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
+                    <div class="text-center">
+                        <p class="text-[10px] font-black text-[#c68b6d] uppercase tracking-[0.2em]">Día <span x-text="activeStep + 1"></span> de 7</p>
+                    </div>
+                    <div class="flex bg-white/50 p-1.5 rounded-2xl border border-white/50 backdrop-blur-sm">
+                        <button @click="bibleVersion = 'RVR1960'" :class="bibleVersion === 'RVR1960' ? 'bg-[#c68b6d] text-white shadow-md' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded-xl transition-all duration-300">RVR</button>
+                        <button @click="bibleVersion = 'NTV'" :class="bibleVersion === 'NTV' ? 'bg-[#c68b6d] text-white shadow-md' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded-xl ml-1 transition-all duration-300">NTV</button>
+                    </div>
                 </div>
-                <div id="readingScroll" class="flex-1 overflow-y-auto px-8 pt-8 pb-48 z-10 no-scrollbar text-left">
-                    <h2 class="text-3xl font-black text-slate-900 mb-8" x-text="roadmap[activeStep].title"></h2>
-                    <p class="text-xl text-slate-600 leading-relaxed font-medium mb-10 text-justify" x-text="roadmap[activeStep].context"></p>
-                    <div class="p-10 bg-slate-900 rounded-[2.5rem] shadow-xl text-white mb-10 relative overflow-hidden text-left"><div class="absolute top-0 right-0 p-4 opacity-10"><i data-lucide="book-open" class="w-16 h-16 text-white"></i></div><p class="text-2xl font-serif italic mb-6 relative z-10 text-justify" x-text="bibleVersion === 'RVR1960' ? roadmap[activeStep].verse_rvr : roadmap[activeStep].verse_ntv"></p><div class="w-10 h-1 bg-blue-500 mb-4 rounded-full"></div><p class="text-[10px] font-black text-white/40 uppercase tracking-widest text-left" x-text="'— ' + roadmap[activeStep].ref"></p></div>
-                    <div class="py-2 text-left"><p class="text-2xl font-black text-slate-900 mb-6" x-text="roadmap[activeStep].question"></p><textarea x-model="reflections[activeStep]" class="w-full bg-slate-50 border-2 border-slate-100 rounded-[2rem] p-8 text-xl min-h-[200px] outline-none text-left" placeholder="Escribe aquí..."></textarea></div>
+                <div id="readingScroll" class="flex-1 overflow-y-auto px-8 pt-8 pb-48 z-10 no-scrollbar">
+                    <div class="mb-8">
+                        <p class="text-[#c68b6d] font-black text-[9px] uppercase tracking-widest mb-2" x-text="roadmap[activeStep].subtitle"></p>
+                        <h2 class="text-3xl font-black text-slate-900 leading-tight tracking-tight" x-text="roadmap[activeStep].title"></h2>
+                    </div>
+                    <p class="text-lg text-slate-600 leading-relaxed font-medium mb-10 text-justify" x-text="roadmap[activeStep].context"></p>
+                    <div class="p-8 bg-[#1e293b] rounded-[2.5rem] shadow-2xl text-white mb-10 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-6 opacity-5"><i data-lucide="quote" class="w-24 h-24 text-white"></i></div>
+                        <p class="text-xl font-serif italic mb-6 relative z-10 text-justify leading-snug" x-text="bibleVersion === 'RVR1960' ? roadmap[activeStep].verse_rvr : roadmap[activeStep].verse_ntv"></p>
+                        <div class="w-10 h-1 bg-[#c68b6d] mb-4 rounded-full"></div>
+                        <p class="text-[10px] font-black text-[#c68b6d] uppercase tracking-[0.2em]" x-text="roadmap[activeStep].ref"></p>
+                    </div>
+                    <div class="py-2 space-y-6">
+                        <div class="space-y-4">
+                            <h3 class="text-xl font-black text-slate-900 tracking-tight" x-text="roadmap[activeStep].question"></h3>
+                            <div class="relative">
+                                <textarea x-model="reflections[activeStep]" class="w-full bg-white border border-slate-100 rounded-[2rem] p-6 text-lg min-h-[200px] outline-none focus:border-[#c68b6d] focus:ring-4 focus:ring-[#c68b6d]/5 shadow-sm transition-all placeholder:text-slate-300" placeholder="Escribe tus pensamientos aquí..."></textarea>
+                                <div class="absolute bottom-5 right-6"><i data-lucide="pen-tool" class="w-5 h-5 text-slate-200"></i></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="absolute bottom-[76px] left-0 w-full p-6 bg-gradient-to-t from-white via-white to-transparent z-40 text-center"><button @click="markStepComplete()" class="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-xl shadow-2xl active:scale-95 transition-all text-center"><span x-text="activeStep === 6 ? 'FINALIZAR' : 'SIGUIENTE'"></span></button></div>
+                <div class="absolute bottom-28 left-0 w-full px-8 z-40">
+                    <button @click="markStepComplete()" class="btn-primary py-5 text-lg shadow-2xl shadow-[#c68b6d]/30 flex items-center justify-center gap-4">
+                        <span x-text="activeStep === 6 ? 'FINALIZAR VIAJE' : 'CONTINUAR'"></span>
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </button>
+                </div>
             </div>
         </template>
 
         <!-- PANTALLA: BIBLIA -->
         <template x-if="view === 'bible'">
-            <div class="bg-[#f4f5f7] h-full flex flex-col animate-fade-in overflow-y-auto pb-32 text-left no-scrollbar">
-                <div class="bg-white/80 backdrop-blur-md px-6 pt-12 pb-6 flex justify-between items-center sticky top-0 z-20 border-b border-slate-100/50"><div class="flex items-center gap-3 text-blue-600 text-left"><i data-lucide="book"></i><h2 class="text-2xl font-black text-slate-900 tracking-tighter text-left">Escrituras</h2></div><div class="flex bg-slate-100 p-1 rounded-lg"><button @click="bibleVersion = 'RVR1960'" :class="bibleVersion === 'RVR1960' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded transition-all">RVR</button><button @click="bibleVersion = 'NTV'" :class="bibleVersion === 'NTV' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded ml-1 transition-all">NTV</button></div></div>
-                <div class="p-6 space-y-6 text-left">
-                    <template x-for="step in roadmap"><div class="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100 text-left"><p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-2" x-text="step.subtitle"></p><p class="text-xl font-serif italic text-slate-800 mb-4 text-justify" x-text="bibleVersion === 'RVR1960' ? step.verse_rvr : step.verse_ntv"></p><p class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-left" x-text="'— ' + step.ref"></p></div></template>
+            <div class="bg-[#fdfcf9] h-full flex flex-col animate-fade-in overflow-y-auto pb-36 no-scrollbar">
+                <div class="glass px-8 pt-14 pb-8 flex justify-between items-center sticky top-0 z-20">
+                    <div class="flex items-center gap-4 text-[#c68b6d]">
+                        <div class="w-10 h-10 rounded-xl bg-[#c68b6d]/10 flex items-center justify-center"><i data-lucide="book" class="w-5 h-5"></i></div>
+                        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Escrituras</h2>
+                    </div>
+                    <div class="flex bg-white/50 p-1.5 rounded-2xl border border-white/50 backdrop-blur-sm shadow-sm">
+                        <button @click="bibleVersion = 'RVR1960'" :class="bibleVersion === 'RVR1960' ? 'bg-[#c68b6d] text-white shadow-md' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded-xl transition-all duration-300">RVR</button>
+                        <button @click="bibleVersion = 'NTV'" :class="bibleVersion === 'NTV' ? 'bg-[#c68b6d] text-white shadow-md' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded-xl ml-1 transition-all duration-300">NTV</button>
+                    </div>
+                </div>
+                <div class="p-6 space-y-4">
+                    <template x-for="(step, index) in roadmap">
+                        <div class="bg-white rounded-[2rem] border border-slate-100/50 shadow-sm overflow-hidden transition-all duration-300"
+                             :class="expandedBibleSteps.includes(index) ? 'ring-2 ring-[#c68b6d]/10' : ''">
+                            <button @click="toggleBibleStep(index)" 
+                                    class="w-full p-6 flex justify-between items-center hover:bg-slate-50 transition-colors text-left">
+                                <div>
+                                    <p class="text-[8px] font-black text-[#c68b6d] uppercase tracking-[0.2em] mb-1" x-text="'Día ' + (index + 1) + ' · ' + step.subtitle"></p>
+                                    <p class="text-base font-black text-slate-900 tracking-tight" x-text="step.ref"></p>
+                                </div>
+                                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-300 transition-transform duration-300"
+                                   :class="expandedBibleSteps.includes(index) ? 'rotate-180 text-[#c68b6d]' : ''"></i>
+                            </button>
+                            
+                            <div x-show="expandedBibleSteps.includes(index)" 
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="opacity-0 -translate-y-2"
+                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                 class="px-8 pb-8">
+                                <div class="w-full h-px bg-slate-50 mb-6"></div>
+                                <p class="text-lg font-serif italic text-slate-800 text-justify leading-relaxed" 
+                                   x-text="bibleVersion === 'RVR1960' ? step.verse_rvr : step.verse_ntv"></p>
+                            </div>
+                        </div>
+                    </template>
                 </div>
             </div>
         </template>
 
         <!-- PANTALLA: DISCOVER -->
         <template x-if="view === 'discover'">
-            <div class="h-full bg-[#f4f5f7] animate-fade-in overflow-y-auto pb-32 text-left no-scrollbar">
-                <div class="bg-white px-6 pt-12 pb-6 border-b border-slate-100 sticky top-0 z-20 flex justify-between items-center text-left"><h2 class="text-2xl font-black text-slate-900 tracking-tighter text-left">Biblioteca LJ</h2><button @click="view = 'home'" class="p-3 bg-slate-100 rounded-2xl hover:bg-slate-200 transition-colors text-slate-800"><i data-lucide="x" class="w-5 h-5 text-slate-800"></i></button></div>
-                <div class="p-6 space-y-4 text-left">
-                    <div class="flex gap-2 overflow-x-auto no-scrollbar py-1 text-left"><template x-for="cat in categories"><button @click="selectedCategory = cat" :class="selectedCategory === cat ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-100'" class="px-5 py-2.5 rounded-2xl text-xs font-black transition-all whitespace-nowrap border text-left" x-text="cat"></button></template></div>
-                    <div class="grid grid-cols-1 gap-4 text-left">
-                        <template x-for="dev in filteredPlans"><div @click="window.open(dev.url, '_blank')" class="bg-white p-5 rounded-[1.5rem] shadow-sm border border-slate-100 flex items-center gap-5 cursor-pointer hover:border-blue-200 active:scale-95 transition-all group text-left"><div :class="dev.color" class="w-14 h-14 rounded-[1.2rem] flex items-center justify-center shrink-0 shadow-inner text-left"><i :data-lucide="dev.icon" class="w-6 h-6 text-left"></i></div><div class="flex-1 text-left"><h4 class="font-black text-slate-900 text-lg leading-tight tracking-tight text-left" x-text="dev.title"></h4><p class="text-[9px] font-bold text-slate-400 uppercase mt-1 text-left">Wilson Pareja C.</p></div><i data-lucide="external-link" class="w-5 h-5 text-slate-200"></i></div></template>
+            <div class="h-full bg-[#fdfcf9] animate-fade-in overflow-y-auto pb-36 no-scrollbar">
+                <div class="glass px-8 pt-14 pb-8 border-b border-slate-100 sticky top-0 z-20 flex justify-between items-center">
+                    <h2 class="text-3xl font-black text-slate-900 tracking-tight">Biblioteca LJ</h2>
+                    <button @click="view = 'home'" class="p-3 bg-white border border-slate-100 rounded-2xl hover:bg-slate-50 transition-colors shadow-sm text-slate-800"><i data-lucide="x" class="w-6 h-6"></i></button>
+                </div>
+                <div class="p-8 space-y-8">
+                    <div class="flex gap-3 overflow-x-auto no-scrollbar py-2 -mx-2 px-2">
+                        <template x-for="cat in categories">
+                            <button @click="selectedCategory = cat" :class="selectedCategory === cat ? 'bg-[#c68b6d] text-white shadow-lg shadow-[#c68b6d]/20 border-[#c68b6d]' : 'bg-white text-slate-500 border-slate-100 shadow-sm'" class="px-6 py-3.5 rounded-[1.5rem] text-xs font-black transition-all whitespace-nowrap border" x-text="cat"></button>
+                        </template>
+                    </div>
+                    <div class="grid grid-cols-1 gap-6">
+                        <template x-for="dev in filteredPlans">
+                            <div @click="window.open(dev.url, '_blank')" class="bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center gap-6 cursor-pointer hover:shadow-xl hover:shadow-[#c68b6d]/5 hover:border-[#c68b6d]/20 transition-all duration-500 group">
+                                <div :class="dev.color" class="w-16 h-16 rounded-[1.5rem] flex items-center justify-center shrink-0 shadow-inner group-hover:scale-110 transition-transform duration-500">
+                                    <i :data-lucide="dev.icon" class="w-7 h-7"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="font-black text-slate-900 text-xl leading-tight tracking-tight mb-1" x-text="dev.title"></h4>
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Guía: Wilson Pareja C.</p>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-[#c68b6d]/10 group-hover:text-[#c68b6d] transition-colors">
+                                    <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -313,18 +590,63 @@
 
         <!-- PANTALLA: PLAN OVERVIEW -->
         <template x-if="view === 'plan_overview'">
-            <div class="h-full bg-white animate-fade-in overflow-y-auto pb-32 text-left no-scrollbar">
-                <div class="p-6 flex items-center gap-4 border-b border-slate-100 sticky top-0 bg-white z-20 text-left">
-                    <button @click="view = 'home'" class="p-2 hover:bg-slate-50 rounded-2xl text-slate-800"><i data-lucide="chevron-left" class="w-6 h-6 text-slate-800"></i></button>
-                    <h2 class="font-black text-slate-900 text-xl tracking-tight text-left">Detalles del Plan</h2>
+            <div class="h-full bg-[#fdfcf9] animate-fade-in overflow-y-auto pb-36 no-scrollbar">
+                <div class="glass px-8 pt-14 pb-8 flex items-center gap-6 sticky top-0 z-20">
+                    <button @click="view = 'home'" class="p-3 bg-white border border-slate-100 rounded-2xl hover:bg-slate-50 transition-colors shadow-sm text-slate-800"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
+                    <h2 class="font-black text-slate-900 text-2xl tracking-tight">Detalles del Plan</h2>
                 </div>
-                <div class="p-8 text-left">
-                    <div class="flex gap-6 mb-12 text-left">
-                        <div class="w-24 h-24 bg-blue-600 rounded-[2rem] flex items-center justify-center text-white shadow-xl text-white"><i data-lucide="heart" class="text-white fill-white"></i></div>
-                        <div class="flex-1 py-2 text-left"><h1 class="text-3xl font-black text-slate-900 leading-tight tracking-tight text-left">Mamá: Entre Altares y Algoritmos</h1><p class="text-slate-400 font-bold mt-2 tracking-widest uppercase text-[10px] text-left">Wilson Pareja C.</p></div>
+                <div class="p-8">
+                    <div class="flex gap-6 mb-12 items-center">
+                        <div class="w-24 h-24 bg-gradient-to-br from-[#c68b6d] to-[#a36a4d] rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl shadow-[#c68b6d]/30"><i data-lucide="heart" class="w-10 h-10 fill-white"></i></div>
+                        <div class="flex-1">
+                            <h1 class="text-2xl font-black text-slate-900 leading-tight tracking-tight mb-1">Mamá: Entre Altares y Algoritmos</h1>
+                            <p class="text-[#c68b6d] font-black tracking-[0.2em] uppercase text-[9px]">Guía: Wilson Pareja C.</p>
+                        </div>
                     </div>
-                    <div class="space-y-4 text-left">
-                        <template x-for="(step, index) in roadmap"><div @click="activeStep = index; view = 'reading'" class="flex items-center gap-4 p-5 border-b border-slate-50 cursor-pointer hover:bg-slate-50 rounded-[1.5rem] transition-all group text-left"><div :class="completedSteps.includes(index) ? 'bg-green-500 text-white' : 'bg-slate-100 text-slate-400'" class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm text-left"><span x-text="completedSteps.includes(index) ? '✓' : (index + 1)"></span></div><div class="flex-1 text-left"><p class="font-black text-slate-900 text-lg leading-none text-left" x-text="step.title"></p><p class="text-[9px] text-slate-400 uppercase font-bold mt-1 text-left" x-text="step.subtitle"></p></div><i data-lucide="play-circle" class="w-6 h-6 text-slate-200 group-hover:text-blue-500 text-left"></i></div></template>
+                    <div class="space-y-4 relative">
+                        <!-- Línea de conexión -->
+                        <div class="absolute left-11 top-10 bottom-10 w-0.5 bg-slate-100 -z-10"></div>
+                        
+                        <template x-for="(step, index) in roadmap">
+                            <div @click="index <= getNextStep() || completedSteps.includes(index) ? (activeStep = index, view = 'reading') : null" 
+                                 :class="{
+                                    'opacity-40 grayscale pointer-events-none': index > getNextStep() && getNextStep() !== -1,
+                                    'border-[#c68b6d] ring-4 ring-[#c68b6d]/5 scale-[1.02] shadow-xl': index === getNextStep(),
+                                    'bg-white border-slate-100 shadow-sm': index !== getNextStep()
+                                 }"
+                                 class="flex items-center gap-5 p-5 border rounded-[2rem] cursor-pointer transition-all duration-500 group relative bg-white">
+                                
+                                <!-- Icono de estado -->
+                                <div :class="{
+                                        'bg-[#c68b6d] text-white shadow-lg shadow-[#c68b6d]/20': completedSteps.includes(index),
+                                        'bg-[#1e293b] text-white': index === getNextStep(),
+                                        'bg-slate-50 text-slate-300': index > getNextStep() && getNextStep() !== -1
+                                     }" 
+                                     class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-base transition-all">
+                                    <template x-if="completedSteps.includes(index)">
+                                        <i data-lucide="check" class="w-6 h-6"></i>
+                                    </template>
+                                    <template x-if="index === getNextStep()">
+                                        <span x-text="index + 1"></span>
+                                    </template>
+                                    <template x-if="index > getNextStep() && getNextStep() !== -1">
+                                        <i data-lucide="lock" class="w-5 h-5"></i>
+                                    </template>
+                                </div>
+
+                                <div class="flex-1">
+                                    <p class="font-black text-slate-900 text-lg leading-none mb-1 group-hover:text-[#c68b6d] transition-colors" 
+                                       :class="completedSteps.includes(index) ? 'line-through text-slate-400' : ''"
+                                       x-text="step.title"></p>
+                                    <p class="text-[8px] text-slate-400 uppercase font-black tracking-widest" x-text="step.subtitle"></p>
+                                </div>
+
+                                <div x-show="index <= getNextStep() || completedSteps.includes(index)" 
+                                     class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 group-hover:bg-[#c68b6d]/10 group-hover:text-[#c68b6d] transition-colors">
+                                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -332,21 +654,94 @@
 
         <!-- PANTALLA: ÉXITO -->
         <template x-if="view === 'success'">
-            <div class="h-full flex flex-col items-center justify-center p-10 text-center animate-fade-in bg-white text-center">
-                <div class="w-40 h-40 bg-yellow-400 rounded-[3rem] flex items-center justify-center shadow-2xl shadow-yellow-100 animate-bounce mb-8 shrink-0 text-center"><i data-lucide="trophy" class="w-20 h-20 text-white"></i></div>
-                <h2 class="text-4xl font-black text-slate-900 mb-4 tracking-tighter text-center leading-none">¡Gloria a Dios!</h2>
-                <p class="text-xl text-slate-500 mb-10 leading-relaxed text-center px-4 text-justify" x-text="userName.split(' ')[0] + ', has completado este viaje espiritual de la mano de La Casa de Juanita.'"></p>
-                <button @click="view = 'home'" class="w-full py-6 bg-slate-900 text-white rounded-[2rem] font-black text-xl shadow-2xl active:scale-95 transition-all text-center">VOLVER AL INICIO</button>
+            <div class="h-full flex flex-col items-center justify-center p-12 text-center animate-fade-in bg-[#fdfcf9] relative overflow-hidden">
+                <div class="absolute -top-24 -left-24 w-64 h-64 bg-[#c68b6d]/5 rounded-full blur-[100px]"></div>
+                <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-[#c68b6d]/10 rounded-full blur-[100px]"></div>
+                
+                <div class="w-48 h-48 bg-gradient-to-br from-[#c68b6d] to-[#a36a4d] rounded-[4rem] flex items-center justify-center shadow-3xl shadow-[#c68b6d]/30 animate-bounce mb-12 shrink-0 relative z-10">
+                    <i data-lucide="trophy" class="w-24 h-24 text-white"></i>
+                </div>
+                <h2 class="text-5xl font-black text-slate-900 mb-6 tracking-tight leading-none relative z-10">¡Gloria a Dios!</h2>
+                <p class="text-xl text-slate-500 mb-14 leading-relaxed px-6 text-justify relative z-10" x-text="userName.split(' ')[0] + ', has completado este viaje espiritual de la mano de La Casa de Juanita. Tu legado de fe continúa creciendo.'"></p>
+                <button @click="view = 'home'" class="btn-primary py-6 text-xl shadow-2xl relative z-10">VOLVER AL INICIO</button>
+            </div>
+        </template>
+
+        <!-- PANTALLA: MÁS (PERFIL) -->
+        <template x-if="view === 'more'">
+            <div class="bg-[#fdfcf9] h-full flex flex-col animate-fade-in overflow-y-auto pb-36 no-scrollbar">
+                <div class="glass px-8 pt-14 pb-8 flex items-center gap-6 sticky top-0 z-20">
+                    <h2 class="font-black text-slate-900 text-2xl tracking-tight">Mi Cuenta</h2>
+                </div>
+                
+                <div class="p-8 space-y-8">
+                    <!-- Perfil Card -->
+                    <div class="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col items-center text-center">
+                        <div class="w-24 h-24 bg-[#c68b6d]/10 rounded-full flex items-center justify-center text-[#c68b6d] mb-6">
+                            <i data-lucide="user" class="w-12 h-12"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900" x-text="userName"></h3>
+                        <p class="text-slate-400 text-sm mb-8" x-text="userEmail"></p>
+                        <div class="w-full h-px bg-slate-50 mb-8"></div>
+                        <div class="grid grid-cols-2 gap-4 w-full">
+                            <div class="bg-slate-50 p-4 rounded-2xl">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Progreso</p>
+                                <p class="text-xl font-black text-[#c68b6d]" x-text="progress + '%'"></p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-2xl">
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Días</p>
+                                <p class="text-xl font-black text-[#c68b6d]" x-text="completedSteps.length + '/7'"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opciones -->
+                    <div class="space-y-4">
+                        <button class="w-full p-6 bg-white border border-slate-100 rounded-[2rem] flex items-center gap-4 hover:bg-slate-50 transition-colors">
+                            <div class="w-10 h-10 bg-blue-50 text-blue-500 rounded-xl flex items-center justify-center"><i data-lucide="bell" class="w-5 h-5"></i></div>
+                            <span class="flex-1 text-left font-black text-slate-700">Notificaciones</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300"></i>
+                        </button>
+                        <button class="w-full p-6 bg-white border border-slate-100 rounded-[2rem] flex items-center gap-4 hover:bg-slate-50 transition-colors">
+                            <div class="w-10 h-10 bg-amber-50 text-amber-500 rounded-xl flex items-center justify-center"><i data-lucide="star" class="w-5 h-5"></i></div>
+                            <span class="flex-1 text-left font-black text-slate-700">Calificar App</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-300"></i>
+                        </button>
+                        <button @click="logout()" class="w-full p-6 bg-red-50/50 border border-red-100 rounded-[2rem] flex items-center gap-4 hover:bg-red-50 transition-colors group">
+                            <div class="w-10 h-10 bg-red-100 text-red-500 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"><i data-lucide="log-out" class="w-5 h-5"></i></div>
+                            <span class="flex-1 text-left font-black text-red-600">Cerrar Sesión</span>
+                        </button>
+                    </div>
+
+                    <div class="pt-10 text-center">
+                        <p class="text-[10px] font-black text-slate-300 uppercase tracking-[0.3em]">La Casa de Juanita v1.2</p>
+                    </div>
+                </div>
             </div>
         </template>
 
         <!-- NAV INFERIOR -->
-        <nav x-show="['home', 'reading', 'bible', 'discover', 'plan_overview'].includes(view)" class="absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur-xl border-t border-slate-100/50 px-8 py-5 flex justify-between items-center z-50 text-center">
-            <div @click="view = 'home'" class="flex flex-col items-center gap-1.5 cursor-pointer text-center" :class="view === 'home' ? 'text-slate-900' : 'text-slate-300'"><i data-lucide="heart" :class="view === 'home' ? 'fill-current scale-110' : ''"></i><span class="text-[9px] font-black uppercase tracking-widest text-center">Hoy</span></div>
-            <div @click="view = 'bible'" class="flex flex-col items-center gap-1.5 cursor-pointer text-center" :class="view === 'bible' ? 'text-slate-900' : 'text-slate-300'"><i data-lucide="book"></i><span class="text-[9px] font-black uppercase tracking-widest text-center">Biblia</span></div>
-            <div @click="view = 'discover'" class="flex flex-col items-center gap-1.5 cursor-pointer text-center" :class="view === 'discover' ? 'text-slate-900' : 'text-slate-300'"><i data-lucide="compass"></i><span class="text-[9px] font-black uppercase tracking-widest text-center">Planes</span></div>
-            <div class="flex flex-col items-center gap-1.5 text-slate-200 cursor-not-allowed opacity-50 text-center"><i data-lucide="users"></i><span class="text-[9px] font-black uppercase tracking-widest text-center text-slate-200">Amigos</span></div>
-            <div class="flex flex-col items-center gap-1.5 text-slate-200 cursor-not-allowed opacity-50 text-center"><i data-lucide="more-horizontal"></i><span class="text-[9px] font-black uppercase tracking-widest text-center text-slate-200">Más</span></div>
+        <nav x-show="['home', 'reading', 'bible', 'discover', 'plan_overview', 'more'].includes(view)" class="absolute bottom-6 left-1/2 -translate-x-1/2 w-[92%] glass rounded-[2rem] px-6 py-4 flex justify-between items-center z-50 shadow-2xl shadow-black/5">
+            <div @click="view = 'home'" class="flex flex-col items-center gap-1 cursor-pointer transition-all duration-300" :class="view === 'home' ? 'text-[#c68b6d] scale-105' : 'text-slate-300 hover:text-slate-400'">
+                <i data-lucide="heart" :class="view === 'home' ? 'fill-current' : ''" class="w-5 h-5"></i>
+                <span class="text-[8px] font-black uppercase tracking-[0.1em]">Hoy</span>
+            </div>
+            <div @click="view = 'bible'" class="flex flex-col items-center gap-1 cursor-pointer transition-all duration-300" :class="view === 'bible' ? 'text-[#c68b6d] scale-105' : 'text-slate-300 hover:text-slate-400'">
+                <i data-lucide="book" :class="view === 'bible' ? 'fill-current' : ''" class="w-5 h-5"></i>
+                <span class="text-[8px] font-black uppercase tracking-[0.1em]">Biblia</span>
+            </div>
+            <div @click="view = 'discover'" class="flex flex-col items-center gap-1 cursor-pointer transition-all duration-300" :class="view === 'discover' ? 'text-[#c68b6d] scale-105' : 'text-slate-300 hover:text-slate-400'">
+                <i data-lucide="compass" :class="view === 'discover' ? 'fill-current' : ''" class="w-5 h-5"></i>
+                <span class="text-[8px] font-black uppercase tracking-[0.1em]">Planes</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 text-slate-200 cursor-not-allowed opacity-30">
+                <i data-lucide="users" class="w-5 h-5"></i>
+                <span class="text-[8px] font-black uppercase tracking-[0.1em]">Amigos</span>
+            </div>
+            <div @click="view = 'more'" class="flex flex-col items-center gap-1 cursor-pointer transition-all duration-300" :class="view === 'more' ? 'text-[#c68b6d] scale-105' : 'text-slate-300 hover:text-slate-400'">
+                <i data-lucide="more-horizontal" :class="view === 'more' ? 'fill-current' : ''" class="w-5 h-5"></i>
+                <span class="text-[8px] font-black uppercase tracking-[0.1em]">Más</span>
+            </div>
         </nav>
 
         <div class="hidden sm:block absolute top-0 left-1/2 -translate-x-1/2 w-36 h-7 bg-slate-50/50 backdrop-blur-md rounded-b-[1.5rem] z-[60] border-x border-b border-slate-100 text-center"></div>
