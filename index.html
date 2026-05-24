@@ -608,7 +608,7 @@
                     </div>
                     
                     <div x-show="authStep === 'input'" class="w-full text-center animate-scale-up">
-                        <h1 class="text-3xl font-black text-slate-900 mb-2" x-text="authMode === 'login' ? 'Bienvenida de nuevo' : 'Bienvenida a Casa'"></h1>
+                        <h1 class="text-3xl font-black text-slate-900 mb-2" x-text="authMode === 'login' ? 'Bienveni@s de nuevo' : 'Bienvenidos a Casa'"></h1>
                         <p class="text-slate-500 mb-10 text-sm" x-text="authMode === 'login' ? 'Nos alegra verte otra vez.' : 'Crea tu perfil para comenzar este viaje de fe.'"></p>
                         
                         <form @submit.prevent="authMode === 'login' ? login() : sendCode()" class="space-y-5 px-4">
