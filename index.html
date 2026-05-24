@@ -103,75 +103,196 @@
                 historyExpanded: false,
                 categories: ["Todos", "Fe", "Vida", "Propósito", "Relaciones"],
                 
-                // Contenido del Devocional (Textos Justificados)
-                roadmap: [
-                    { 
-                        title: "El Hilo Invisible", 
-                        subtitle: "Introducción", 
-                        context: "Imagina un hilo de seda que recorre décadas de historia. No se rompe, solo cambia de color. Ese hilo es la influencia de una madre. Hoy no solo miramos hacia atrás con nostalgia, sino con curiosidad: ¿Qué semillas plantaron nuestras abuelas que aún florecen hoy? ¿Y qué semillas estamos plantando nosotras en un mundo lleno de pantallas?", 
-                        verse_rvr: "Trayendo a la memoria la fe no fingida que hay en ti, la cual habitó primero en tu abuela Loida, y en tu madre Eunice, y estoy cierto que en ti también.", 
-                        verse_ntv: "Me acuerdo de tu fe sincera, pues tú tienes la misma fe de la que primero se alimentaron tu abuela Loida y tu madre, Eunice, y sé que esa fe sigue viva en ti.", 
-                        ref: "2 Timoteo 1:5", 
-                        question: "¿Qué semillas plantaron tus abuelas que aún florecen hoy?" 
+                // Sistema de múltiples devocionales
+                selectedDevocional: null,
+                progressData: {},
+                devocionales: [
+                    {
+                        id: "mama",
+                        isCurrentWeek: false,
+                        title: "Mamá: Entre Altares y Algoritmos",
+                        subtitle: "Un recorrido de 7 estaciones para redescubrir tu propósito.",
+                        icon: "heart",
+                        color: "from-[#c68b6d] to-[#a36a4d]",
+                        introVideo: "https://i.imgur.com/XOKwR06.mp4",
+                        introQuote: "Esta semana te invitamos a un viaje especial de renovación y fe.",
+                        featuredTag: "Devocional Destacado",
+                        featuredTitle: "Mamá: Entre Altares y Algoritmos",
+                        featuredText: "Un recorrido de 7 estaciones para redescubrir tu propósito.",
+                        hasStory: true,
+                        story: {
+                            title: "“La Biblia de la Abuela”",
+                            icon: "book-marked",
+                            paragraphs: [
+                                "Había un joven que estaba pasando por uno de los momentos más difíciles de su vida. La ansiedad, las malas decisiones y la presión del mundo lo habían alejado de todo lo que había aprendido en casa.",
+                                "Una noche, mientras buscaba unos documentos viejos, encontró una caja empolvada. Dentro había fotos antiguas, cartas… y una Biblia muy desgastada.",
+                                "En la primera página decía: <br><span class=\"text-[#c68b6d] font-black not-italic block mt-2\">“Para mi hijo, para que nunca olvide que Dios camina con él. — Mamá”</span>",
+                                "El joven comenzó a pasar las hojas. Había versículos subrayados, fechas escritas a mano y pequeñas notas en los márgenes: <br><span class=\"block mt-2 opacity-80 pl-4 border-l-2 border-[#c68b6d]/20 not-italic font-sans text-sm font-medium\">“Hoy oré por ti.”<br>“Dios te protegerá.”<br>“Recuerda quién eres.”<br>“Aunque yo no esté, Él siempre estará.”</span>",
+                                "En medio del silencio, comenzó a llorar. No lloraba solo por los recuerdos… Lloraba porque entendió algo: su madre había sembrado en él mucho más de lo que imaginaba.",
+                                "Aunque él se había alejado, las semillas seguían vivas.",
+                                "Esa noche abrió uno de los textos marcados: <br><span class=\"text-white font-black not-italic block mt-2 border-t border-white/10 pt-4\">“Instruye al niño en su camino, y aun cuando fuere viejo no se apartará de él.” — Proverbios 22:6</span>",
+                                "Y allí, en el cuarto vacío, entendió que las oraciones de una madre nunca mueren."
+                            ]
+                        },
+                        steps: [
+                            { 
+                                title: "El Hilo Invisible", 
+                                subtitle: "Introducción", 
+                                context: "Imagina un hilo de seda que recorre décadas de historia. No se rompe, solo cambia de color. Ese hilo es la influencia de una madre. Hoy no solo miramos hacia atrás con nostalgia, sino con curiosidad: ¿Qué semillas plantaron nuestras abuelas que aún florecen hoy? ¿Y qué semillas estamos plantando nosotras en un mundo lleno de pantallas?", 
+                                verse_rvr: "Trayendo a la memoria la fe no fingida que hay en ti, la cual habitó primero en tu abuela Loida, y en tu madre Eunice, y estoy cierto que en ti también.", 
+                                verse_ntv: "Me acuerdo de tu fe sincera, pues tú tienes la misma fe de la que primero se alimentaron tu abuela Loida y tu madre, Eunice, y sé que esa fe sigue viva en ti.", 
+                                ref: "2 Timoteo 1:5", 
+                                question: "¿Qué semillas plantaron tus abuelas que aún florecen hoy?" 
+                            },
+                            { 
+                                title: "Presencia y Tradición", 
+                                subtitle: "Los 60s", 
+                                context: "Una era de rituales. El olor al desayuno, la mesa como el centro del universo y la iglesia como el eje social. La madre era la guardiana del hogar, enfocada en la formación del carácter a través de la constancia. La seguridad se encontraba en el orden y la provisión emocional.", 
+                                verse_rvr: "Se levanta aun de noche y da comida a su familia y ración a sus criadas... Fuerza y honor son su vestidura; y se ríe de lo por venir.", 
+                                verse_ntv: "Se levanta de madrugada para preparar el desayuno para su familia y planificar las labores de sus criadas... Está vestida de fortaleza y dignidad, y se ríe sin temor al futuro.", 
+                                ref: "Proverbios 31:15, 25", 
+                                question: "¿Qué olor o sonido de tu infancia te recuerda a la fe de tu madre?" 
+                            },
+                            { 
+                                title: "Resiliencia en el Cambio", 
+                                subtitle: "Los 70s", 
+                                context: "Las madres de los 70 enseñaron resiliencia: cómo mantener la fe cuando el mundo exterior empieza a gritar más fuerte que las tradiciones. Es una década de cuestionamientos y búsqueda de identidad donde la mujer comenzó a ganar espacios masivos fuera del hogar.", 
+                                verse_rvr: "Mujer virtuosa, ¿quién la hallará? Porque su estima sobrepasa largamente a la de las piedras preciosas... No tiene temor de la nieve por su familia, porque toda su familia está vestida de ropas dobles.", 
+                                verse_ntv: "¿Quién podrá encontrar una esposa virtuosa y capaz? Es más preciosa que los rubíes... No tiene miedo al frío por su familia, porque todos tienen ropas abrigadas.", 
+                                ref: "Proverbios 31:10, 21", 
+                                question: "¿Cómo manejas la tensión entre lo externo y tu hogar?" 
+                            },
+                            { 
+                                title: "La Era de la Influencia", 
+                                subtitle: "Los 80s", 
+                                context: "La fe se transmitía en el trayecto, en la conversación casual, integrando a Dios en la cotidianidad acelerada. En una década marcada por el consumo y la cultura pop, la influencia se volvió activa para proteger los valores frente a la omnipresente televisión.", 
+                                verse_rvr: "Y estas palabras que yo te mando hoy, estarán sobre tu corazón; y las repetirás a tus hijos, y hablarás de ellas estando en tu casa, y andando por el camino, y al acostarte, y cuando te levantes.", 
+                                verse_ntv: "Debes comprometerte con todo tu ser a cumplir estas decisiones que te entrego hoy. Repíteselas a tus hijos una y otra vez. Habla de ellas en tus conversaciones cuando estés en tu casa.", 
+                                ref: "Deuteronomio 6:6-7", 
+                                question: "¿Qué conversación 'en el camino' marcó tu fe?" 
+                            },
+                            { 
+                                title: "Conexión y Prudencia", 
+                                subtitle: "Los 90s", 
+                                context: "El rol mutó hacia la mediación: explicar el mundo a los hijos frente a la transición digital. Se valoró más la inteligencia emocional y la comunicación abierta, convirtiendo a la madre en el filtro necesario para procesar los cambios rápidos del entorno.", 
+                                verse_rvr: "Asimismo, las ancianas deben ser reverentes en su conducta... que enseñen a las mujeres jóvenes a amar a sus maridos y a sus hijos, a ser prudentes, castas, cuidadosas de su casa, buenas...", 
+                                verse_ntv: "Enseña a las mujeres mayores a vivir de una manera que demuestre reverencia... deben instruir a las mujeres más jóvenes a amar a sus esposos y a sus hijos, a vivir sabiamente.", 
+                                ref: "Tito 2:3-5", 
+                                question: "¿Sientes que eres un 'puente' o un 'muro' en temas difíciles?" 
+                            },
+                            { 
+                                title: "La Era del Algoritmo", 
+                                subtitle: "El Hoy", 
+                                context: "No compites con la vecina, compites con un algoritmo. El reto es recuperar la intencionalidad frente al exceso de comparación de las redes sociales. Amoldarse hoy significa dejar que Instagram dicte tu valor; renovar la mente es volver a la identidad que Dios te da.", 
+                                verse_rvr: "No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento, para que comprobéis cuál sea la buena voluntad de Dios, agradable y perfecta.", 
+                                verse_ntv: "No se amolden a la conducta ni a las costumbres de este mundo, más bien dejen que Dios los transforme en personas nuevas al cambiarles la manera de pensar.", 
+                                ref: "Romanos 12:2", 
+                                question: "¿Cómo planeas proteger tu identidad hoy?" 
+                            },
+                            { 
+                                title: "Oración y Legado", 
+                                subtitle: "Conclusión", 
+                                context: "La maternidad ha cambiado de forma, pero su esencia es eterna: ser el reflejo del amor incondicional de Dios. No importa en qué década naciste; el Espíritu Santo es el mismo ayer, hoy y siempre. Tu mirada será el refugio de tus hijos.", 
+                                verse_rvr: "Padre, gracias por las mujeres que me precedieron. Gracias por sus oraciones, que hoy son mi suelo. Ayúdame a ser una madre que no busca perfección, sino presencia. Que mis hijos no recuerden mi teléfono, sino mis ojos. Amén.", 
+                                verse_ntv: "Dios, gracias por el legado de las que abrieron el camino. Dame la sabiduría para estar presente y que mi mirada sea el refugio de mis hijos en este mundo digital. Amén.", 
+                                ref: "Oración Final", 
+                                question: "Acción: Recupera la mesa hoy. ¿Qué paso darás?" 
+                            }
+                        ]
                     },
-                    { 
-                        title: "Presencia y Tradición", 
-                        subtitle: "Los 60s", 
-                        context: "Una era de rituales. El olor al desayuno, la mesa como el centro del universo y la iglesia como el eje social. La madre era la guardiana del hogar, enfocada en la formación del carácter a través de la constancia. La seguridad se encontraba en el orden y la provisión emocional.", 
-                        verse_rvr: "Se levanta aun de noche y da comida a su familia y ración a sus criadas... Fuerza y honor son su vestidura; y se ríe de lo por venir.", 
-                        verse_ntv: "Se levanta de madrugada para preparar el desayuno para su familia y planificar las labores de sus criadas... Está vestida de fortaleza y dignidad, y se ríe sin temor al futuro.", 
-                        ref: "Proverbios 31:15, 25", 
-                        question: "¿Qué olor o sonido de tu infancia te recuerda a la fe de tu madre?" 
-                    },
-                    { 
-                        title: "Resiliencia en el Cambio", 
-                        subtitle: "Los 70s", 
-                        context: "Las madres de los 70 enseñaron resiliencia: cómo mantener la fe cuando el mundo exterior empieza a gritar más fuerte que las tradiciones. Es una década de cuestionamientos y búsqueda de identidad donde la mujer comenzó a ganar espacios masivos fuera del hogar.", 
-                        verse_rvr: "Mujer virtuosa, ¿quién la hallará? Porque su estima sobrepasa largamente a la de las piedras preciosas... No tiene temor de la nieve por su familia, porque toda su familia está vestida de ropas dobles.", 
-                        verse_ntv: "¿Quién podrá encontrar una esposa virtuosa y capaz? Es más preciosa que los rubíes... No tiene miedo al frío por su familia, porque todos tienen ropas abrigadas.", 
-                        ref: "Proverbios 31:10, 21", 
-                        question: "¿Cómo manejas la tensión entre lo externo y tu hogar?" 
-                    },
-                    { 
-                        title: "La Era de la Influencia", 
-                        subtitle: "Los 80s", 
-                        context: "La fe se transmitía en el trayecto, en la conversación casual, integrando a Dios en la cotidianidad acelerada. En una década marcada por el consumo y la cultura pop, la influencia se volvió activa para proteger los valores frente a la omnipresente televisión.", 
-                        verse_rvr: "Y estas palabras que yo te mando hoy, estarán sobre tu corazón; y las repetirás a tus hijos, y hablarás de ellas estando en tu casa, y andando por el camino, y al acostarte, y cuando te levantes.", 
-                        verse_ntv: "Debes comprometerte con todo tu ser a cumplir estas decisiones que te entrego hoy. Repíteselas a tus hijos una y otra vez. Habla de ellas en tus conversaciones cuando estés en tu casa.", 
-                        ref: "Deuteronomio 6:6-7", 
-                        question: "¿Qué conversación 'en el camino' marcó tu fe?" 
-                    },
-                    { 
-                        title: "Conexión y Prudencia", 
-                        subtitle: "Los 90s", 
-                        context: "El rol mutó hacia la mediación: explicar el mundo a los hijos frente a la transición digital. Se valoró más la inteligencia emocional y la comunicación abierta, convirtiendo a la madre en el filtro necesario para procesar los cambios rápidos del entorno.", 
-                        verse_rvr: "Asimismo, las ancianas deben ser reverentes en su conducta... que enseñen a las mujeres jóvenes a amar a sus maridos y a sus hijos, a ser prudentes, castas, cuidadosas de su casa, buenas...", 
-                        verse_ntv: "Enseña a las mujeres mayores a vivir de una manera que demuestre reverencia... deben instruir a las mujeres más jóvenes a amar a sus esposos y a sus hijos, a vivir sabiamente.", 
-                        ref: "Tito 2:3-5", 
-                        question: "¿Sientes que eres un 'puente' o un 'muro' en temas difíciles?" 
-                    },
-                    { 
-                        title: "La Era del Algoritmo", 
-                        subtitle: "El Hoy", 
-                        context: "No compites con la vecina, compites con un algoritmo. El reto es recuperar la intencionalidad frente al exceso de comparación de las redes sociales. Amoldarse hoy significa dejar que Instagram dicte tu valor; renovar la mente es volver a la identidad que Dios te da.", 
-                        verse_rvr: "No os conforméis a este siglo, sino transformaos por medio de la renovación de vuestro entendimiento, para que comprobéis cuál sea la buena voluntad de Dios, agradable y perfecta.", 
-                        verse_ntv: "No se amolden a la conducta ni a las costumbres de este mundo, más bien dejen que Dios los transforme en personas nuevas al cambiarles la manera de pensar.", 
-                        ref: "Romanos 12:2", 
-                        question: "¿Cómo planeas proteger tu identidad hoy?" 
-                    },
-                    { 
-                        title: "Oración y Legado", 
-                        subtitle: "Conclusión", 
-                        context: "La maternidad ha cambiado de forma, pero su esencia es eterna: ser el reflejo del amor incondicional de Dios. No importa en qué década naciste; el Espíritu Santo es el mismo ayer, hoy y siempre. Tu mirada será el refugio de tus hijos.", 
-                        verse_rvr: "Padre, gracias por las mujeres que me precedieron. Gracias por sus oraciones, que hoy son mi suelo. Ayúdame a ser una madre que no busca perfección, sino presencia. Que mis hijos no recuerden mi teléfono, sino mis ojos. Amén.", 
-                        verse_ntv: "Dios, gracias por el legado de las que abrieron el camino. Dame la sabiduría para estar presente y que mi mirada sea el refugio de mis hijos en este mundo digital. Amén.", 
-                        ref: "Oración Final", 
-                        question: "Acción: Recupera la mesa hoy. ¿Qué paso darás?" 
+                    {
+                        id: "edicion_limitada",
+                        isCurrentWeek: true,
+                        title: "Edición Limitada: Volviendo a tu Diseño de Fábrica",
+                        subtitle: "Un viaje de 6 estaciones desde la creación y el quiebre hasta el propósito de tus cicatrices.",
+                        icon: "sparkles",
+                        color: "from-[#c68b6d] to-[#8d6e63]",
+                        introVideo: "https://i.imgur.com/ncKTMsR.png",
+                        introQuote: "Un viaje de restauración desde la creación y el quiebre, hasta el propósito de tus cicatrices.",
+                        featuredTag: "Novedad Especial",
+                        featuredTitle: "Edición Limitada: Volviendo a tu Diseño de Fábrica",
+                        featuredText: "Un nuevo viaje de 6 estaciones para restaurar tu identidad original.",
+                        hasStory: true,
+                        story: {
+                            title: "“El Restaurador y el Violín Antiguo”",
+                            icon: "sparkles",
+                            paragraphs: [
+                                "En una pequeña tienda de antigüedades había un viejo violín cubierto de polvo. Las cuerdas estaban desgastadas, la madera rayada y nadie parecía interesarse en él.",
+                                "Un subastador lo levantó y dijo: <br><span class=\"text-[#c68b6d] font-black not-italic block mt-2\">—“¿Quién ofrece un dólar?”</span>",
+                                "Algunos se rieron. Otros pensaron que no valía nada.",
+                                "—“¿Dos dólares? ¿Tres?”<br>Silencio.",
+                                "Entonces, un anciano caminó lentamente hacia el frente. Tomó el violín entre sus manos, limpió el polvo, ajustó las cuerdas y comenzó a tocar una melodía tan hermosa que todo el lugar quedó en silencio.",
+                                "Cuando terminó, el subastador volvió a preguntar: <br><span class=\"text-[#c68b6d] font-black not-italic block mt-2\">—“¿Cuánto ofrecen ahora?”</span>",
+                                "Y las voces comenzaron: <br><span class=\"block mt-2 opacity-80 pl-4 border-l-2 border-[#c68b6d]/20 not-italic font-sans text-sm font-medium\">—“¡Cien dólares!”<br>—“¡Doscientos!”<br>—“¡Mil!”</span>",
+                                "La diferencia no estaba en el violín. <br><span class=\"text-white font-black not-italic block mt-2 border-t border-white/10 pt-4\">La diferencia estaba en las manos del restaurador.</span>"
+                            ]
+                        },
+                        steps: [
+                            {
+                                title: "El Diseño Original",
+                                subtitle: "Estación 1 · El Origen",
+                                context: "Desde el principio de todas las cosas, Dios creó todo de forma buena y perfecta, esta-bleciendo un diseño original único para cada persona. De la nada a la obra maestra, Dios no produce a las personas en serie ni hace copias, sino que creó a cada individuo a su imagen con amor, cuidado y una intención especial. Tu forma de ser, tu personalidad y tus rasgos no son un accidente biológico, sino un diseño inédito que de-muestra que cada ser humano es una pieza necesaria y valiosa en el plan de Dios.",
+                                verse_rvr: "Y creó Dios al hombre a su imagen, a imagen de Dios lo creó; varón y hembra los creó... Y vio Dios todo lo que había hecho, y he aquí que era bueno en gran manera.",
+                                verse_ntv: "Así que Dios creó a los seres humanos a su propia imagen. A imagen de Dios los creó; hombre y mujer los creó... La tierra no tenía forma y estaba vacía... Entonces Dios dijo: «Que haya luz», y hubo luz.",
+                                ref: "Génesis 1:27, 1:2-3",
+                                question: "¿Qué rasgo de tu personalidad o forma de ser consideras un regalo único de Dios y no un error?"
+                            },
+                            {
+                                title: "La Comparación y la Religión",
+                                subtitle: "Estación 2 · El Quiebre",
+                                context: "Las tragedias, los momentos '911' de la vida, el peso de nuestras rebeliones y el pecado deforman nuestro diseño original. Todos somos 'gente rota' cargando con historias tristes de seis palabras («Vendo zapatos de bebé sin usar», «Nuestro matrimonio se acabó»). Para proteger nuestro valor original frente a la religión con-denatoria, debemos dejar de compararnos con los demás. Intentar ser como otros fatiga nuestro corazón y nos hace olvidar que no nos falta nada, pues no fuimos creados para encajar sino para ser originales.",
+                                verse_rvr: "Porque tú formaste mis entrañas; Tú me hiciste en el vientre de mi madre. Te alabaré; porque formidables, maravillosas son tus obras; Estoy maravillado, Y mi alma lo sabe muy bien.",
+                                verse_ntv: "Tú creaste las delicadas partes internas de mi cuerpo y me entretejiste en el vientre de mi madre. ¡Gracias por hacerme tan maravillosamente complejo! Tu mano me guió... y tu mano me sostuvo.",
+                                ref: "Salmo 139:13-14a, Isaías 53:5",
+                                question: "¿En qué área de tu vida tiendes a compararte más con otros y cómo está fatigando eso tu corazón?"
+                            },
+                            {
+                                title: "El Alfarero",
+                                subtitle: "Estación 3 · El Proceso",
+                                context: "La religión exige que cargues tú solo con tus pedazos rotos. Jesús ofrece desarmarte para volverte a armar según le parezca mejor. A Dios le encanta tomar lo des-cartado, lo subestimado y lo destruido para transformarlo en una obra de arte. El único requisito para entrar al taller del Alfarero celestial es reconocer nuestro propio quebranto y soltar el peso de nuestras cargas.",
+                                verse_rvr: "Y la vasija de barro que él hacía se echó a perder en su mano; y volvió y la hizo otra vasija, según le pareció mejor hacerla.",
+                                verse_ntv: "Pero la vasija que estaba formando no resultó como él esperaba, así que la aplastó y comenzó de nuevo a formar otra vasija que le pareció mejor... «Vengan a mí todos los que están cansados y llevan cargas pesadas, y yo les daré descanso».",
+                                ref: "Jeremías 18:4, Mateo 11:28",
+                                question: "¿Qué carga o pedazo roto estás intentando cargar a solas por religión en lugar de entregárselo al Alfarero?"
+                            },
+                            {
+                                title: "Kintsugi Divino",
+                                subtitle: "Estación 4 · Identidad Restaurada",
+                                context: "En el mundo físico, lo roto pierde valor y se tira a la basura. En la economía del Reino, lo quebrado es sumamente precioso. Tus cicatrices de batalla no se ocultan; se rellenan con el oro de la gracia divina. Eres más valioso después de ser reparado. Al igual que la técnica japonesa del kintsugi, Dios toma tus heridas y dolor para transformarte en una obra nueva, definiéndote como linaje escogido, real sacerdocio y nación santa.",
+                                verse_rvr: "Mas vosotros sois linaje escogido, real sacerdocio, nación santa, pueblo adquirido por Dios, para que anunciéis las virtudes de aquel que os llamó de las tinieblas a su luz admirable.",
+                                verse_ntv: "Pero ustedes no son así porque son un pueblo elegido. Son sacerdotes del Rey, una nación santa, posesión exclusiva de Dios... Pues somos la obra maestra de Dios. Él nos creó de nuevo en Cristo Jesús.",
+                                ref: "1 Pedro 2:9a, Efesios 2:10a",
+                                question: "¿Cómo reescribe la verdad de ser 'posesión exclusiva de Dios' el valor que le das a tus propias cicatrices?"
+                            },
+                            {
+                                title: "La Activación del Diseño",
+                                subtitle: "Estación 5 · El Propósito",
+                                context: "Solo los soldados heridos pueden servir con verdadera empatía. Tus dones y talentos no son para alardear; son herramientas depositadas en ti para sanar a otros. No hay talento pequeño si se entrega con amor. Fuimos equipados con dones de-stinados a bendecir a otros: Escuchar, Animar, Enseñar, Servir y Ayudar. La gracia fluye con mayor poder a través de personas que entienden su propio quebranto.",
+                                verse_rvr: "Cada uno según el don que ha recibido, minístrelo a los otros, como buenos administradores de la multiforme gracia de Dios.",
+                                verse_ntv: "Dios, de su gran variedad de dones espirituales, les ha dado un don a cada uno de ustedes. Úsenlos bien para servirse los unos a los otros... destinados no para esconderse, sino para usarse con amor.",
+                                ref: "1 Pedro 4:10",
+                                question: "¿Cuál de las cinco activaciones (Escuchar, Animar, Enseñar, Servir, Ayudar) sientes que Dios quiere usar hoy en ti para bendecir a alguien?"
+                            },
+                            {
+                                title: "Tu Vida Importa Ahora",
+                                subtitle: "Estación 6 · Conclusión",
+                                context: "El mapa no termina en ti. Fuiste diseñado intencionalmente, quebrado por la vida, restaurado con oro por el Alfarero, y equipado con dones exactos. Todo esto suce-dió para que la luz fluya a través de tus grietas hacia 'los demás'. Tu vida y propósito importan desde el día de hoy, y se cumplen a través de la obediencia, la bondad y las acciones diarias de amor y respeto hacia tu prójimo.",
+                                verse_rvr: "Así alumbre vuestra luz delante de los hombres, para que vean vuestras buenas obras, y glorifiquen a vuestro Padre que está en los cielos.",
+                                verse_ntv: "De la misma manera, dejen que sus buenas acciones brillen a la vista de todos, para que todos alaben a su Padre celestial... tratando a nuestro prójimo con la misma paciencia y amor con la que Dios nos valora.",
+                                ref: "Mateo 5:16",
+                                question: "Acción práctica: ¿Qué pequeña acción de bondad u obediencia harás hoy para dejar brillar tu luz?"
+                            }
+                        ]
                     }
                 ],
 
+                get roadmap() {
+                    return this.selectedDevocional ? this.selectedDevocional.steps : [];
+                },
+
                 // Biblioteca de otros devocionales (Textos Justificados)
                 otherDevotionals: [
+                    { title: "Mamá: Entre Altares y Algoritmos", localId: "mama", icon: 'heart', color: "bg-rose-50 text-rose-500", cat: "Propósito" },
                     { title: "La Ciencia de Atrapar el Viento", url: "https://innovacion-con-clase.github.io/la-ciencia-de-atrapar-el-viento/", icon: 'wind', color: "bg-blue-50 text-blue-600", cat: "Fe" },
                     { title: "Ordena tus Letras", url: "https://innovacion-con-clase.github.io/Ordena-tus-Letras/", icon: 'pen-tool', color: "bg-amber-50 text-amber-600", cat: "Propósito" },
                     { title: "ADN de Rescatista", url: "https://innovacion-con-clase.github.io/ADN-de-Rescatista/", icon: 'shield', color: "bg-red-50 text-red-600", cat: "Vida" },
@@ -183,22 +304,82 @@
                     const savedMode = localStorage.getItem('juanita_dark_mode');
                     if (savedMode) this.darkMode = JSON.parse(savedMode);
 
+                    // Inicializar datos de progreso de todos los devocionales
+                    const savedProgress = localStorage.getItem('juanita_progress_data');
+                    this.progressData = savedProgress ? JSON.parse(savedProgress) : {};
+                    this.devocionales.forEach(dev => {
+                        if (!this.progressData[dev.id]) {
+                            this.progressData[dev.id] = {
+                                activeStep: 0,
+                                completedSteps: [],
+                                reflections: {},
+                                progress: 0
+                            };
+                        }
+                    });
+
+                    // Cargar último devocional seleccionado o default 'edicion_limitada' (semana activa)
+                    const savedDevId = localStorage.getItem('juanita_selected_dev_id') || 'edicion_limitada';
+                    this.selectDevocional(savedDevId);
+
                     const savedUser = localStorage.getItem('juanita_user');
                     if (savedUser) {
                         const user = JSON.parse(savedUser);
                         this.userName = user.name;
                         this.userEmail = user.email;
                         this.isGuest = false;
-                        this.view = 'video_intro';
+
+                        // Si ya está "en marcha" (progreso > 0), va directo al plan_overview. Si es nuevo, va a la Portada!
+                        const progress = this.progressData[savedDevId] ? this.progressData[savedDevId].progress : 0;
+                        this.view = progress > 0 ? 'plan_overview' : 'video_intro';
                     } else {
                         // Flujo prioritario: Si no hay usuario, entra como invitado de inmediato
                         this.isGuest = true;
                         this.userName = '';
                         this.view = 'video_intro';
                     }
+
                     this.refreshUI();
                     this.$watch('view', () => this.refreshUI());
                     this.$watch('selectedCategory', () => this.refreshUI());
+                },
+
+                selectDevocional(devId) {
+                    // Guardar progreso actual del devocional activo
+                    if (this.selectedDevocional) {
+                        this.progressData[this.selectedDevocional.id] = {
+                            activeStep: this.activeStep,
+                            completedSteps: [...this.completedSteps],
+                            reflections: {...this.reflections},
+                            progress: this.progress
+                        };
+                        localStorage.setItem('juanita_progress_data', JSON.stringify(this.progressData));
+                    }
+
+                    // Seleccionar nuevo devocional
+                    const newDev = this.devocionales.find(d => d.id === devId);
+                    if (newDev) {
+                        this.selectedDevocional = newDev;
+                        localStorage.setItem('juanita_selected_dev_id', devId);
+
+                        const data = this.progressData[devId] || {
+                            activeStep: 0,
+                            completedSteps: [],
+                            reflections: {},
+                            progress: 0
+                        };
+
+                        this.activeStep = data.activeStep;
+                        this.completedSteps = data.completedSteps;
+                        this.reflections = data.reflections;
+                        this.progress = data.progress;
+                    }
+                    this.refreshUI();
+                },
+
+                openDevocional(devId) {
+                    this.selectDevocional(devId);
+                    this.view = 'video_intro';
                 },
 
                 refreshUI() {
@@ -351,6 +532,8 @@
                     // Solo enviar feedback si no es invitado
                     if (content && !this.isGuest) {
                         try {
+                            // Prefijar la reflexión con el nombre del devocional para identificarla en Google Sheets sin cambiar el backend
+                            const prefixedContent = "[" + this.selectedDevocional.title + "] " + content;
                             fetch(APPS_SCRIPT_URL, {
                                 method: 'POST',
                                 mode: 'no-cors',
@@ -358,7 +541,7 @@
                                     action: 'feedback', 
                                     email: this.userEmail, 
                                     stepIndex: this.activeStep, 
-                                    content: content 
+                                    content: prefixedContent 
                                 })
                             });
                         } catch (e) { console.error("Error saving feedback:", e); }
@@ -367,14 +550,40 @@
                     if (!this.completedSteps.includes(this.activeStep)) {
                         this.completedSteps.push(this.activeStep);
                         this.progress = Math.round((this.completedSteps.length / this.roadmap.length) * 100);
+                        
+                        // Guardar en progressData inmediatamente para que se sincronice en el Home
+                        if (this.selectedDevocional) {
+                            this.progressData[this.selectedDevocional.id] = {
+                                activeStep: this.activeStep,
+                                completedSteps: [...this.completedSteps],
+                                reflections: {...this.reflections},
+                                progress: this.progress
+                            };
+                            localStorage.setItem('juanita_progress_data', JSON.stringify(this.progressData));
+                        }
                     }
-                    if (this.activeStep === 6) this.view = 'success';
-                    else { this.activeStep++; this.refreshUI(); }
+                    
+                    if (this.activeStep === this.roadmap.length - 1) {
+                        this.view = 'success';
+                    } else { 
+                        this.activeStep++; 
+                        
+                        // Actualizar activeStep en progressData al avanzar de estación
+                        if (this.selectedDevocional) {
+                            this.progressData[this.selectedDevocional.id].activeStep = this.activeStep;
+                            localStorage.setItem('juanita_progress_data', JSON.stringify(this.progressData));
+                        }
+                        
+                        this.view = 'plan_overview';
+                        this.refreshUI(); 
+                    }
                 },
 
                 openPlan(dev) {
                     if (this.isGuest) {
                         this.view = 'unlock_premium';
+                    } else if (dev.localId) {
+                        this.openDevocional(dev.localId);
                     } else {
                         window.open(dev.url, '_blank');
                     }
@@ -466,38 +675,103 @@
             </div>
         </template>
 
-        <!-- PANTALLA: BIENVENIDA SEMANAL (CON VÍDEO) -->
+        <!-- PANTALLA: BIENVENIDA SEMANAL (CON VÍDEO/IMAGEN DINÁMICA) -->
         <template x-if="view === 'video_intro'">
             <div class="relative h-full w-full bg-black flex flex-col animate-fade-in overflow-hidden">
-                <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-50" id="introVideo"><source src="https://i.imgur.com/XOKwR06.mp4" type="video/mp4"></video>
+                <!-- Si es video (.mp4) -->
+                <template x-if="selectedDevocional && selectedDevocional.introVideo && selectedDevocional.introVideo.endsWith('.mp4')">
+                    <video :key="selectedDevocional.id" :src="selectedDevocional.introVideo" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-50" id="introVideo"></video>
+                </template>
+                <!-- Si es imagen (no .mp4) -->
+                <template x-if="selectedDevocional && selectedDevocional.introVideo && !selectedDevocional.introVideo.endsWith('.mp4')">
+                    <img :key="selectedDevocional.id" :src="selectedDevocional.introVideo" class="absolute inset-0 w-full h-full object-cover opacity-50" alt="Cover Image">
+                </template>
                 <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black"></div>
                 
                 <div class="relative z-10 flex flex-col h-full p-10 text-white">
                     <div class="flex justify-between items-start mt-12">
-                        <div class="relative">
-                            <div class="absolute -inset-6 bg-[#c68b6d]/30 blur-2xl rounded-full"></div>
-                            <img src="https://i.imgur.com/dDYOrEm.png" alt="LJ" class="w-20 relative z-10 drop-shadow-2xl brightness-110">
-                        </div>
-                        <button @click="isMuted = !isMuted; document.getElementById('introVideo').muted = isMuted" class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 transition-all hover:bg-white/20">
+                        <!-- Botón de Volver al Home -->
+                        <button @click="view = 'home'" class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 transition-all hover:bg-white/20 active:scale-95">
+                            <i data-lucide="chevron-left" class="w-6 h-6 text-white"></i>
+                        </button>
+                        
+                        <!-- Botón de Silenciar (solo si es video) -->
+                        <button x-show="selectedDevocional && selectedDevocional.introVideo && selectedDevocional.introVideo.endsWith('.mp4')"
+                                @click="isMuted = !isMuted; const vid = document.getElementById('introVideo'); if(vid) vid.muted = isMuted" 
+                                class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 transition-all hover:bg-white/20 active:scale-95">
                             <i :data-lucide="isMuted ? 'volume-x' : 'volume-2'" class="w-5 h-5 text-white"></i>
                         </button>
                     </div>
                     
-                    <div class="mt-8">
+                    <div class="mt-8" x-show="selectedDevocional">
                         <p class="text-[#c68b6d] font-black uppercase tracking-[0.3em] text-[10px] mb-2">Bienvenida a Casa</p>
                         <h1 class="text-5xl font-black leading-none mb-6">¡Hola, <span x-text="isGuest ? 'Bienvenida' : userName.split(' ')[0]"></span>!</h1>
-                        <p class="text-xl text-white/80 leading-relaxed font-serif italic text-justify">Esta semana te invitamos a un viaje especial de renovación y fe.</p>
+                        <p class="text-xl text-white/80 leading-relaxed font-serif italic text-justify text-left" x-text="selectedDevocional.introQuote"></p>
                     </div>
 
-                    <div class="mt-auto space-y-8 pb-10">
+                    <div class="mt-auto space-y-8 pb-10" x-show="selectedDevocional">
                         <div class="bg-white/10 backdrop-blur-md p-6 rounded-[2.5rem] border border-white/20">
-                            <p class="text-[9px] font-black uppercase tracking-widest text-[#c68b6d] mb-2">Devocional Destacado</p>
-                            <h2 class="text-2xl font-black leading-tight mb-2">Mamá: Entre Altares y Algoritmos</h2>
-                            <p class="text-sm text-white/60">Un recorrido de 7 días para redescubrir tu propósito.</p>
+                            <p class="text-[9px] font-black uppercase tracking-widest text-[#c68b6d] mb-2" x-text="selectedDevocional.featuredTag"></p>
+                            <h2 class="text-2xl font-black leading-tight mb-2 text-left" x-text="selectedDevocional.featuredTitle"></h2>
+                            <p class="text-sm text-white/60 text-left" x-text="selectedDevocional.featuredText"></p>
                         </div>
 
-                        <button @click="view = 'home'" class="w-full py-6 bg-[#c68b6d] text-white rounded-[2rem] font-black shadow-2xl shadow-black/40 flex items-center justify-center gap-4 group active:scale-95 transition-all">
-                            EMPEZAR SEMANA 
+                        <button @click="view = 'story_intro'" class="w-full py-6 bg-[#c68b6d] text-white rounded-[2rem] font-black shadow-2xl shadow-black/40 flex items-center justify-center gap-4 group active:scale-95 transition-all">
+                            LEER HISTORIA DE INICIO
+                            <i data-lucide="arrow-right" class="group-hover:translate-x-2 transition-transform"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- PANTALLA: HISTORIA DE INICIO CON FONDO DE PORTADA -->
+        <template x-if="view === 'story_intro'">
+            <div class="relative h-full w-full bg-black flex flex-col animate-fade-in overflow-hidden">
+                <!-- Imagen/Vídeo de fondo de la portada -->
+                <template x-if="selectedDevocional && selectedDevocional.introVideo && selectedDevocional.introVideo.endsWith('.mp4')">
+                    <video :key="selectedDevocional.id" :src="selectedDevocional.introVideo" autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-30" id="storyVideo"></video>
+                </template>
+                <template x-if="selectedDevocional && selectedDevocional.introVideo && !selectedDevocional.introVideo.endsWith('.mp4')">
+                    <img :key="selectedDevocional.id" :src="selectedDevocional.introVideo" class="absolute inset-0 w-full h-full object-cover opacity-30" alt="Story Background">
+                </template>
+                <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-black/90 backdrop-blur-md"></div>
+                
+                <div class="relative z-10 flex flex-col h-full p-10 text-white">
+                    <div class="flex justify-between items-start mt-12 mb-6">
+                        <!-- Botón de Volver a Portada -->
+                        <button @click="view = 'video_intro'" class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/20 transition-all hover:bg-white/20 active:scale-95">
+                            <i data-lucide="chevron-left" class="w-6 h-6 text-white"></i>
+                        </button>
+                        <div class="flex items-center gap-2 text-[#c68b6d] font-black text-[10px] uppercase tracking-widest bg-[#c68b6d]/10 px-4 py-2 rounded-full border border-[#c68b6d]/20">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Historia de Inicio
+                        </div>
+                    </div>
+                    
+                    <div class="flex-1 overflow-y-auto no-scrollbar py-6 pr-1 animate-scale-up" x-show="selectedDevocional && selectedDevocional.hasStory">
+                        <h1 class="text-3xl font-black leading-tight tracking-tight mb-8 text-[#c68b6d]" x-text="selectedDevocional.story.title"></h1>
+                        
+                        <div class="relative transition-all duration-700 overflow-hidden" :class="historyExpanded ? 'max-h-[3000px]' : 'max-h-[260px]'">
+                            <div class="space-y-6 text-white/90 font-serif italic text-lg leading-relaxed text-justify pb-16">
+                                <template x-for="(p, idx) in selectedDevocional.story.paragraphs" :key="idx">
+                                    <p x-html="p"></p>
+                                </template>
+                            </div>
+                            
+                            <!-- Overlay de desvanecimiento para texto no expandido -->
+                            <div x-show="!historyExpanded" class="absolute bottom-0 left-0 w-full h-28 bg-gradient-to-t from-black via-black/45 to-transparent pointer-events-none"></div>
+                        </div>
+
+                        <!-- Botón para expandir historia -->
+                        <button @click="historyExpanded = !historyExpanded" class="mt-6 text-[#c68b6d] font-black tracking-widest text-[10px] uppercase flex items-center gap-2 hover:translate-x-1 transition-transform">
+                            <span x-text="historyExpanded ? 'VER MENOS' : 'LEER HISTORIA COMPLETA'"></span>
+                            <i :data-lucide="historyExpanded ? 'chevron-up' : 'chevron-down'" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <div class="mt-auto pb-10">
+                        <button @click="view = 'plan_overview'" class="w-full py-6 bg-[#c68b6d] text-white rounded-[2rem] font-black shadow-2xl shadow-black/40 flex items-center justify-center gap-4 group active:scale-95 transition-all">
+                            CONTINUAR VIAJE 
                             <i data-lucide="arrow-right" class="group-hover:translate-x-2 transition-transform"></i>
                         </button>
                     </div>
@@ -520,43 +794,6 @@
                 </div>
 
                 <div class="px-8 py-10 space-y-12">
-                    <!-- Historia Destacada -->
-                    <div class="space-y-6">
-                        <div class="flex items-center justify-between px-1">
-                            <h2 class="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Historia del Día</h2>
-                            <i data-lucide="sparkles" class="w-4 h-4 text-[#c68b6d]"></i>
-                        </div>
-                        <div class="bg-[#1e293b] rounded-[3rem] shadow-2xl shadow-slate-900/20 p-10 relative overflow-hidden group">
-                            <div class="absolute -top-12 -right-12 w-48 h-48 bg-[#c68b6d]/10 rounded-full blur-3xl group-hover:bg-[#c68b6d]/20 transition-all duration-700"></div>
-                            <div class="flex items-center gap-3 text-[#c68b6d] font-black text-[11px] uppercase tracking-widest mb-6"><i data-lucide="book-marked" class="w-4 h-4"></i> “La Biblia de la Abuela”</div>
-                            
-                            <div class="relative transition-all duration-700 overflow-hidden" :class="historyExpanded ? 'max-h-[2000px]' : 'max-h-[220px]'">
-                                <div class="space-y-5 text-white/90 font-serif italic text-lg leading-relaxed text-justify">
-                                    <p>Había un joven que estaba pasando por uno de los momentos más difíciles de su vida. La ansiedad, las malas decisiones y la presión del mundo lo habían alejado de todo lo que había aprendido en casa.</p>
-                                    <p>Una noche, mientras buscaba unos documentos viejos, encontró una caja empolvada. Dentro había fotos antiguas, cartas… y una Biblia muy desgastada.</p>
-                                    <p>En la primera página decía: <br><span class="text-[#c68b6d] font-black not-italic block mt-2">“Para mi hijo, para que nunca olvide que Dios camina con él. — Mamá”</span></p>
-                                    <p>El joven comenzó a pasar las hojas. Había versículos subrayados, fechas escritas a mano y pequeñas notas en los márgenes: <br>
-                                        <span class="block mt-2 opacity-80 pl-4 border-l-2 border-[#c68b6d]/20 not-italic font-sans text-sm font-medium">“Hoy oré por ti.”<br>“Dios te protegerá.”<br>“Recuerda quién eres.”<br>“Aunque yo no esté, Él siempre estará.”</span>
-                                    </p>
-                                    <p>En medio del silencio, comenzó a llorar. No lloraba solo por los recuerdos… Lloraba porque entendió algo: su madre había sembrado en él mucho más de lo que imaginaba.</p>
-                                    <p>Aunque él se había alejado, las semillas seguían vivas.</p>
-                                    <p>Esa noche abrió uno de los textos marcados: <br>
-                                        <span class="text-white font-black not-italic block mt-2 border-t border-white/10 pt-4">“Instruye al niño en su camino, y aun cuando fuere viejo no se apartará de él.” — Proverbios 22:6</span>
-                                    </p>
-                                    <p>Y allí, en el cuarto vacío, entendió que las oraciones de una madre nunca mueren.</p>
-                                </div>
-                                
-                                <!-- Overlay de desvanecimiento -->
-                                <div x-show="!historyExpanded" class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#1e293b] to-transparent"></div>
-                            </div>
-
-                            <button @click="historyExpanded = !historyExpanded" class="mt-6 text-[#c68b6d] font-black tracking-widest text-[10px] uppercase flex items-center gap-2 hover:translate-x-1 transition-transform">
-                                <span x-text="historyExpanded ? 'VER MENOS' : 'LEER HISTORIA COMPLETA'"></span>
-                                <i :data-lucide="historyExpanded ? 'chevron-up' : 'chevron-down'" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-
                     <!-- CTA Registro (Solo Invitados) -->
                     <template x-if="isGuest">
                         <div class="px-8 -mt-6">
@@ -573,20 +810,41 @@
                     </template>
 
                     <!-- Progreso -->
-                    <div class="space-y-6">
-                        <h2 class="text-xl font-black text-slate-900 px-1 tracking-tight">Tu Crecimiento</h2>
-                        <div @click="view = 'plan_overview'" class="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 flex gap-6 items-center cursor-pointer hover:shadow-xl hover:shadow-[#c68b6d]/5 hover:border-[#c68b6d]/20 transition-all duration-500 group">
-                            <div class="w-20 h-20 bg-gradient-to-br from-[#c68b6d] to-[#a36a4d] rounded-[2rem] flex items-center justify-center text-white shadow-lg shadow-[#c68b6d]/30 group-hover:scale-105 transition-transform duration-500"><i data-lucide="heart" class="w-8 h-8 fill-white"></i></div>
-                            <div class="flex-1">
-                                <h3 class="font-black text-slate-900 text-lg leading-tight mb-4 group-hover:text-[#c68b6d] transition-colors">Mamá: Entre Altares y Algoritmos</h3>
-                                <div class="flex items-center gap-4">
-                                    <div class="flex-1 bg-slate-50 h-2.5 rounded-full overflow-hidden">
-                                        <div class="bg-[#c68b6d] h-full transition-all duration-1000 ease-out" :style="'width: ' + progress + '%'"></div>
+                    <!-- TEMA DE LA SEMANA -->
+                    <div class="space-y-6" x-show="devocionales.find(d => d.isCurrentWeek)">
+                        <div class="flex items-center justify-between px-1">
+                            <h2 class="text-[11px] font-black text-[#c68b6d] uppercase tracking-[0.2em]">Tema de la Semana</h2>
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </div>
+                        <template x-for="dev in [devocionales.find(d => d.isCurrentWeek)]" :key="dev.id">
+                            <div @click="openDevocional(dev.id)" class="bg-gradient-to-br from-white to-slate-50/50 p-6 rounded-[2.5rem] shadow-md border border-slate-100 hover:shadow-xl hover:shadow-[#c68b6d]/5 hover:border-[#c68b6d]/30 transition-all duration-500 group cursor-pointer relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-[#c68b6d]/5 rounded-full blur-2xl -z-10 group-hover:bg-[#c68b6d]/10 transition-colors"></div>
+                                <div class="flex gap-5 items-center">
+                                    <div :class="'bg-gradient-to-br ' + dev.color" class="w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-[#c68b6d]/20 shrink-0 group-hover:scale-105 transition-transform duration-500">
+                                        <i :data-lucide="dev.icon" class="w-7 h-7 fill-white"></i>
                                     </div>
-                                    <span class="text-xs font-black text-[#c68b6d]" x-text="progress + '%'"></span>
+                                    <div class="flex-1 min-w-0">
+                                        <span class="text-[8px] font-black text-[#c68b6d] bg-[#c68b6d]/10 px-2.5 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">Activo</span>
+                                        <h3 class="font-black text-slate-900 text-base leading-tight mb-1 truncate group-hover:text-[#c68b6d] transition-colors" x-text="dev.title"></h3>
+                                        <p class="text-[10px] text-slate-400 mb-3 truncate" x-text="dev.subtitle"></p>
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                                <div class="bg-[#c68b6d] h-full transition-all duration-1000 ease-out" :style="'width: ' + (progressData[dev.id] ? progressData[dev.id].progress : 0) + '%'"></div>
+                                            </div>
+                                            <span class="text-[10px] font-black text-[#c68b6d]" x-text="(progressData[dev.id] ? progressData[dev.id].progress : 0) + '%'"></span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </template>
+                    </div>
+
+                    <!-- ENLACE A PLANES ANTERIORES -->
+                    <div class="text-center pt-8 border-t border-slate-100/80">
+                        <button @click="view = 'discover'; selectedCategory = 'Todos';" class="inline-flex items-center gap-3 text-slate-400 hover:text-[#c68b6d] transition-all font-black text-xs uppercase tracking-[0.2em] group py-4 px-6 bg-slate-50/60 rounded-[1.5rem] border border-slate-100 hover:bg-[#c68b6d]/5 hover:border-[#c68b6d]/15">
+                            <i data-lucide="compass" class="w-4.5 h-4.5 text-slate-300 group-hover:text-[#c68b6d] transition-colors"></i>
+                            Ver devocionales anteriores
+                        </button>
                     </div>
                 </div>
             </div>
@@ -598,14 +856,14 @@
                 <div class="px-8 pt-14 pb-6 flex justify-between items-center glass z-30">
                     <button @click="view = 'plan_overview'" class="p-3 hover:bg-white rounded-2xl text-slate-800 transition-colors shadow-sm"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
                     <div class="text-center">
-                        <p class="text-[10px] font-black text-[#c68b6d] uppercase tracking-[0.2em]">Día <span x-text="activeStep + 1"></span> de 7</p>
+                        <p class="text-[10px] font-black text-[#c68b6d] uppercase tracking-[0.2em]">Estación <span x-text="activeStep + 1"></span> de <span x-text="roadmap.length"></span></p>
                     </div>
                     <div class="flex bg-white/50 p-1.5 rounded-2xl border border-white/50 backdrop-blur-sm">
                         <button @click="bibleVersion = 'RVR1960'" :class="bibleVersion === 'RVR1960' ? 'bg-[#c68b6d] text-white shadow-md' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded-xl transition-all duration-300">RVR</button>
                         <button @click="bibleVersion = 'NTV'" :class="bibleVersion === 'NTV' ? 'bg-[#c68b6d] text-white shadow-md' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded-xl ml-1 transition-all duration-300">NTV</button>
                     </div>
                 </div>
-                <div id="readingScroll" class="flex-1 overflow-y-auto px-8 pt-8 pb-48 z-10 no-scrollbar">
+                <div id="readingScroll" class="flex-1 overflow-y-auto px-8 pt-8 pb-36 z-10 no-scrollbar">
                     <div class="mb-8">
                         <p class="text-[#c68b6d] font-black text-[9px] uppercase tracking-widest mb-2" x-text="roadmap[activeStep].subtitle"></p>
                         <h2 class="text-3xl font-black text-slate-900 leading-tight tracking-tight" x-text="roadmap[activeStep].title"></h2>
@@ -625,13 +883,15 @@
                                 <div class="absolute bottom-5 right-6"><i data-lucide="pen-tool" class="w-5 h-5 text-slate-200"></i></div>
                             </div>
                         </div>
+                        
+                        <!-- Botón de continuación integrado de forma natural en el scroll -->
+                        <div class="pt-6">
+                            <button @click="markStepComplete()" class="btn-primary py-5 text-lg shadow-2xl shadow-[#c68b6d]/30 flex items-center justify-center gap-4">
+                                <span x-text="activeStep === roadmap.length - 1 ? 'FINALIZAR VIAJE' : 'CONTINUAR'"></span>
+                                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="absolute bottom-28 left-0 w-full px-8 z-40">
-                    <button @click="markStepComplete()" class="btn-primary py-5 text-lg shadow-2xl shadow-[#c68b6d]/30 flex items-center justify-center gap-4">
-                        <span x-text="activeStep === 6 ? 'FINALIZAR VIAJE' : 'CONTINUAR'"></span>
-                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                    </button>
                 </div>
             </div>
         </template>
@@ -656,7 +916,7 @@
                             <button @click="toggleBibleStep(index)" 
                                     class="w-full p-6 flex justify-between items-center hover:bg-slate-50 transition-colors text-left">
                                 <div>
-                                    <p class="text-[8px] font-black text-[#c68b6d] uppercase tracking-[0.2em] mb-1" x-text="'Día ' + (index + 1) + ' · ' + step.subtitle"></p>
+                                    <p class="text-[8px] font-black text-[#c68b6d] uppercase tracking-[0.2em] mb-1" x-text="'Estación ' + (index + 1) + ' · ' + step.subtitle"></p>
                                     <p class="text-base font-black text-slate-900 tracking-tight" x-text="step.ref"></p>
                                 </div>
                                 <i data-lucide="chevron-down" class="w-5 h-5 text-slate-300 transition-transform duration-300"
@@ -724,11 +984,19 @@
                     <h2 class="font-black text-slate-900 text-2xl tracking-tight">Detalles del Plan</h2>
                 </div>
                 <div class="p-8">
-                    <div class="flex gap-6 mb-12 items-center">
-                        <div class="w-24 h-24 bg-gradient-to-br from-[#c68b6d] to-[#a36a4d] rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl shadow-[#c68b6d]/30"><i data-lucide="heart" class="w-10 h-10 fill-white"></i></div>
+                    <div class="flex gap-6 mb-12 items-center" x-show="selectedDevocional">
+                        <div :class="'bg-gradient-to-br ' + selectedDevocional.color" class="w-24 h-24 rounded-[2.5rem] flex items-center justify-center text-white shadow-2xl shadow-[#c68b6d]/30">
+                            <i :data-lucide="selectedDevocional.icon" class="w-10 h-10 fill-white"></i>
+                        </div>
                         <div class="flex-1">
-                            <h1 class="text-2xl font-black text-slate-900 leading-tight tracking-tight mb-1">Mamá: Entre Altares y Algoritmos</h1>
-                            <p class="text-[#c68b6d] font-black tracking-[0.2em] uppercase text-[9px]">Guía: Wilson Pareja C.</p>
+                            <h1 class="text-2xl font-black text-slate-900 leading-tight tracking-tight mb-1" x-text="selectedDevocional.title"></h1>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                <p class="text-[#c68b6d] font-black tracking-[0.2em] uppercase text-[9px]">Guía: Wilson Pareja C.</p>
+                                <span class="text-slate-300 text-xs hidden sm:inline">•</span>
+                                <button @click="view = 'video_intro'" class="text-[#c68b6d] hover:text-[#a36a4d] transition-colors font-black uppercase text-[9px] tracking-[0.2em] flex items-center gap-1">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> Ver Portada
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="space-y-4 relative">
@@ -817,8 +1085,8 @@
                                 <p class="text-xl font-black text-[#c68b6d]" x-text="progress + '%'"></p>
                             </div>
                             <div class="bg-slate-50 p-4 rounded-2xl">
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Días</p>
-                                <p class="text-xl font-black text-[#c68b6d]" x-text="completedSteps.length + '/7'"></p>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Estaciones</p>
+                                <p class="text-xl font-black text-[#c68b6d]" x-text="completedSteps.length + '/' + roadmap.length"></p>
                             </div>
                         </div>
                     </div>
