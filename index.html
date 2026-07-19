@@ -75,6 +75,38 @@
         .dark-mode .bg-slate-50 { background-color: #334155 !important; }
         .dark-mode .border-slate-100 { border-color: #334155 !important; }
         .dark-mode .input-elegant { background-color: #1e293b !important; color: white !important; border-color: #334155 !important; }
+
+        /* 3D Flip Card Classes */
+        .flip-container {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
     </style>
 
     <script>
@@ -106,6 +138,49 @@
                 // Sistema de múltiples devocionales
                 selectedDevocional: null,
                 progressData: {},
+                flippedCards: [],
+                emotionsMatrix: [
+                    { name: 'Alegría', id: 'alegria', negative: 'Euforia', positive: 'Serenidad', descNeg: 'Desborde de excitación artificial que nos desconecta del presente.', descPos: 'Paz profunda e imperturbable que nace de la confianza en Dios.', icon: 'smile' },
+                    { name: 'Tristeza', id: 'tristeza', negative: 'Amargura', positive: 'Reconciliación', descNeg: 'Resentimiento guardado, dolor que se pudre en el aislamiento.', descPos: 'Proceso de aceptación que nos abre a sanar y restaurar puentes.', icon: 'frown' },
+                    { name: 'Rabia', id: 'rabia', negative: 'Sumisión', positive: 'Fuerza (Límites)', descNeg: 'Callar y ceder, acumulando resentimiento o explotando violentamente.', descPos: 'Energía enfocada para proteger nuestra dignidad y trazar límites con respeto.', icon: 'flame' },
+                    { name: 'Miedo', id: 'miedo', negative: 'Cobardía', positive: 'Poder (para Lograr)', descNeg: 'Evadir responsabilidades o retroceder ante los desafíos por temor.', descPos: 'Cautela inteligente que nos impulsa a prepararnos y actuar con valentía en Dios.', icon: 'shield' },
+                    { name: 'Sorpresa', id: 'sorpresa', negative: 'Parálisis / Negación', positive: 'Curiosidad (para Explorar)', descNeg: 'Quedarse inmóvil ante lo inesperado, rechazando la realidad.', descPos: 'Mentalidad abierta y asombro para aprender y explorar lo nuevo del Creador.', icon: 'sparkles' },
+                    { name: 'Culpa', id: 'culpa', negative: 'Autocastigo / Vergüenza', positive: 'Responsabilidad (para Reparar)', descNeg: 'Cargar el peso de la condenación, sintiéndose indigno y destruyéndose.', descPos: 'Asumir el error de frente, buscando activamente enmendarlo con humildad.', icon: 'award' },
+                    { name: 'Afecto / Amor', id: 'amor', negative: 'Dependencia / Posesividad', positive: 'Empatía / Cuidado Mutuo', descNeg: 'Buscar que el otro llene nuestro vacío, queriendo controlarlo.', descPos: 'Amor libre que busca el bien del otro y comparte el cuidado sin condiciones.', icon: 'heart' },
+                    { name: 'Frustración', id: 'frustracion', negative: 'Bloqueo / Victimismo', positive: 'Resiliencia / Innovación', descNeg: 'Culpar al destino o a otros por los obstáculos, rindiéndose.', descPos: 'Capacidad de adaptarse, aprender del fracaso y buscar nuevos caminos en Dios.', icon: 'refresh-cw' },
+                    { name: 'Confianza', id: 'confianza', negative: 'Ingenuidad / Ceguera', positive: 'Security (para Delegar)', descNeg: 'Confiar sin discernimiento, negando riesgos o banderas rojas.', descPos: 'Certeza tranquila para apoyarse en otros y delegar con sabiduría y madurez.', icon: 'users' },
+                    { name: 'Admiración / Deseo', id: 'admiracion', negative: 'Envidia Tóxica', positive: 'Inspiración (para Mejorar)', descNeg: 'Desechar el logro ajeno, sintiéndose menos y queriendo que el otro falle.', descPos: 'Apreciar la excelencia del prójimo y usar su ejemplo para crecer nosotros.', icon: 'trending-up' },
+                    { name: 'Orgullo', id: 'orgullo', negative: 'Aislamiento / Soberbia', positive: 'Autovaloración / Dignidad', descNeg: 'Creerse superior a los demás, rechazando el consejo y la corrección.', descPos: 'Sano sentido de valor personal, reconociendo nuestros dones con humildad.', icon: 'user' }
+                ],
+                cardSides: {
+                    alegria: 'positive',
+                    tristeza: 'positive',
+                    rabia: 'positive',
+                    miedo: 'positive',
+                    sorpresa: 'positive',
+                    culpa: 'positive',
+                    amor: 'positive',
+                    frustracion: 'positive',
+                    confianza: 'positive',
+                    admiracion: 'positive',
+                    orgullo: 'positive'
+                },
+                flipCard(emotionId, side) {
+                    this.cardSides[emotionId] = side;
+                    if (!this.flippedCards.includes(emotionId)) {
+                        this.flippedCards.push(emotionId);
+                    }
+                },
+                unflipCard(emotionId) {
+                    this.flippedCards = this.flippedCards.filter(id => id !== emotionId);
+                },
+                selectEmotion(emotion, type) {
+                    if (type === 'negative') {
+                        this.reflections[this.activeStep + '_yellow'] = `Identifico la emoción: ${emotion.name}\n- Polo Negativo (${emotion.negative}): ${emotion.descNeg}\n- Mi experiencia: `;
+                    } else {
+                        this.reflections[this.activeStep + '_care'] = `Polo Positivo (${emotion.positive}): ${emotion.descPos}\n- Plan de acción: `;
+                    }
+                },
                 devocionales: [
                     {
                         id: "mama",
@@ -285,8 +360,158 @@
                         ]
                     },
                     {
-                        id: "sin_mascaras",
+                        id: "gestion_emocional",
                         isCurrentWeek: true,
+                        title: "Arquitectura del Espíritu",
+                        subtitle: "Construyendo paz desde nuestras emociones. Un recorrido de 7 estaciones basadas en la Gestión Emocional y el Diseño de Fábrica.",
+                        icon: "compass",
+                        color: "from-sky-900 to-slate-950",
+                        introVideo: "./arquitectura_espiritu_cover.png",
+                        introQuote: "Y la paz de Dios, que sobrepasa todo entendimiento, guardará vuestros corazones... — Filipenses 4:7",
+                        featuredTag: "Edición de la Semana",
+                        featuredTitle: "Arquitectura del Espíritu",
+                        featuredText: "Construyendo paz desde nuestras emociones. Las emociones no son un defecto; son herramientas diseñadas por Dios para edificar tu vida.",
+                        hasStory: true,
+                        story: {
+                            title: "“El Martillo, el Dedo y la Caja de Herramientas”",
+                            icon: "compass",
+                            paragraphs: [
+                                "¿Se han dado cuenta de que el nivel máximo de iluminación espiritual, paz mental y dominio propio de un ser humano suele desaparecer exactamente en el milisegundo en que el martillo decide ignorar la puntilla y aterrizar de lleno en el dedo pulgar?",
+                                "En ese preciso instante, toda la teoría acumulada sobre la serenidad, la paciencia y las buenas palabras sale volando por la ventana. El cerebro pasa de \"soy un ser de luz\" a \"modo combate\" a la velocidad del sonido.",
+                                "Y aquí está la gran ironía de cómo solemos manejar nuestro mundo interior: pasamos gran parte de la vida intentando no sentir. Nos repetimos constantemente a nosotros mismos y a los demás: \"No te enojes\", \"No llores\", \"No te asustes\". Es el equivalente emocional a guardar el martillo bajo llave por miedo a golpearnos, y luego intentar clavar una puntilla empujándola con la frente. Simplemente no funciona, agota, duele más y no construye nada.",
+                                "El resultado de reprimir nuestras emociones es que, cuando la presión sube, terminamos haciéndonos daño o lastimando a otros. A ese mal manejo es al que llamamos Amargura, Sumisión o Cobardía.",
+                                "Pero, ¿qué pasaría si Dios no nos diseñó para esconder lo que sentimos, sino que nos dio una caja de herramientas completa para edificar nuestra vida?",
+                                "El Creador no se equivocó. Las emociones no son un defecto de fábrica. A lo largo de este devocional, vamos a dejar de tenerle miedo a nuestra propia caja de herramientas. Vamos a tomar 12 emociones centrales que absolutamente todos sentimos (sí, incluso el que se acaba de machucar el dedo) y aprenderemos cómo agarrarlas por el mango correcto.",
+                                "Descubriremos que la Rabia bien dirigida no destruye, sino que nos da la fuerza para poner límites sanos, y que la Tristeza no tiene que amargarnos, sino prepararnos para la reconciliación.",
+                                "¡Bienvenidos al manual para organizar nuestras herramientas y empezar a construir con propósito!",
+                                "<span class=\"text-[#c68b6d] font-black not-italic block mt-4 border-t border-white/10 pt-4\">Reflexión inicial:</span>",
+                                "<span class=\"block mt-2 opacity-80 pl-4 border-l-2 border-[#c68b6d]/20 not-italic font-sans text-sm font-medium\">• ¿Por qué solemos ocultar o temerle a nuestra propia \"caja de herramientas\" emocional?<br>• ¿Cómo ejemplifica la escena del martillazo en el dedo nuestra verdadera reacción emocional natural bajo presión?<br>• ¿Qué cambia en tu vida al entender que la rabia o la tristeza tienen un propósito constructivo y positivo cuando las tomamos por el mango correcto?</span>",
+                                "<span class=\"text-white font-black not-italic block mt-4 border-t border-white/10 pt-4\">Puente emocional:</span>",
+                                "Las emociones no son un error de diseño ni señales de debilidad. Fueron sopladas en nosotros por un Dios que también siente. Hoy recorreremos las 7 estaciones que nos guiarán a hacernos responsables de nuestro termostato emocional, aprender de Jesús en Getsemaní y canalizar cada sentimiento hacia la paz y la salud."
+                            ]
+                        },
+                        steps: [
+                            {
+                                title: "Somos Seres Emocionales",
+                                subtitle: "Estación 1 · El Diseño de Fábrica",
+                                context: "Desde el Génesis, la Biblia revela que fuimos creados a imagen y semejanza de Dios. Esto significa que nuestra capacidad de sentir alegría, tristeza, compasión e indignación no es un accidente biológico ni una señal de debilidad humana. Dios mismo es un ser con emociones profundas, y al soplarlas en nosotros, nos dotó de un sistema de conexión y respuesta ante el mundo. Ninguna emoción es mala en sí misma; todas tienen un propósito original en el diseño de fábrica.",
+                                verses: [
+                                    {
+                                        ref: "Génesis 1:27",
+                                        rvr: "Y creó Dios al hombre a su imagen, a imagen de Dios lo creó; varón y hembra los creó.",
+                                        ntv: "Así que Dios creó a los seres humanos a su propia imagen. A imagen de Dios los creó; hombre y mujer los creó."
+                                    },
+                                    {
+                                        ref: "Hebreos 4:15",
+                                        rvr: "Porque no tenemos un sumo sacerdote que no pueda compadecerse de nuestras debilidades, sino uno que fue tentado en todo según nuestra semejanza, pero sin pecado.",
+                                        ntv: "Pues no tenemos un Sumo Sacerdote que no pueda compadecerse de nuestras debilidades, sino uno que fue tentado en todo según nuestra semejanza, pero sin pecado."
+                                    }
+                                ],
+                                question: "¿Qué tan fácil o difícil te resulta aceptar que tus emociones son una parte buena y deseada del diseño de Dios para ti?"
+                            },
+                            {
+                                title: "La Matriz Emocional",
+                                subtitle: "Estación 2 · La Matriz (Actividad)",
+                                context: "Las emociones actúan como indicadores. Sin embargo, debido al quiebre de nuestra naturaleza, a menudo las llevamos a los extremos: el desborde descontrolado o la represión silenciosa. El diseño original propone la gestión y canalización de cada emoción para transformarla en una virtud: la tristeza en reconciliación, la rabia en límites sanos y el miedo en poder para avanzar. Usa las tarjetas de abajo para explorar tu matriz emocional de 11 sentimientos.",
+                                verses: [
+                                    {
+                                        ref: "Proverbios 4:23",
+                                        rvr: "Sobre toda cosa guardada, guarda tu corazón; porque de él mana la vida.",
+                                        ntv: "Sobre todas las cosas cuida tu corazón, porque él determina el rumbo de tu vida."
+                                    }
+                                ],
+                                question: "Actividad: Selecciona una emoción de la matriz de abajo y escribe sobre ella: ¿Cómo se ve cuando se desborda o reprime (Tarjeta Amarilla)? ¿Qué consecuencias ha traído a tu vida (Tarjeta Roja)? ¿Y cómo puedes canalizarla positivamente de la mano de Dios?"
+                            },
+                            {
+                                title: "Responsabilidad Emocional",
+                                subtitle: "Estación 3 · Dueños de nuestro Sentir",
+                                context: "Es muy común utilizar frases como «me haces enojar» o «me pones triste», entregando a los demás el control y el poder sobre nuestro estado interno. Dios nos enseña que, aunque no siempre podemos evitar lo que sentimos ante un estímulo, sí somos completamente responsables de nuestra conducta y de lo que decidimos hacer con esa emoción. Dejar de culpar al entorno es el primer paso hacia la madurez espiritual y la libertad.",
+                                verses: [
+                                    {
+                                        ref: "Gálatas 6:4-5",
+                                        rvr: "Así que, cada uno someta a prueba su propia obra, y entonces tendrá motivo de gloriarse sólo respecto de sí mismo, y no en otro; porque cada uno llevará su propia carga.",
+                                        ntv: "Cada uno debe examinar su propia conducta... Pues cada uno es responsable de su propia conducta."
+                                    },
+                                    {
+                                        ref: "2 Corintios 5:10",
+                                        rvr: "Porque es necesario que todos nosotros comparezcamos ante el tribunal de Cristo, para que cada uno reciba según lo que haya hecho mientras estaba en el cuerpo, sea bueno o sea malo.",
+                                        ntv: "Pues todos tendremos que comparecer ante Cristo para ser juzgados. Cada uno de nosotros recibirá lo que merezca por lo bueno o lo malo que haya hecho mientras estaba en este cuerpo terrenal."
+                                    }
+                                ],
+                                question: "¿A quién o a qué circunstancias has estado entregando el control de tus emociones al culparlos por tu conducta o reacciones?"
+                            },
+                            {
+                                title: "El Getsemaní Personal",
+                                subtitle: "Estación 4 · Ansiedad y Tristeza",
+                                context: "En el huerto de Getsemaní, Jesús experimentó la plenitud de su humanidad al enfrentar una tristeza y ansiedad tan extremas que describió como «sentirse morir». En lugar de reprimir este dolor o fingir una fortaleza inexistente, Jesús nombró su emoción, la compartió con sus amigos más cercanos y se postró ante su Padre en oración ferviente. Su Getsemaní nos enseña que el dolor entregado en el altar es fortalecido con auxilio celestial.",
+                                verses: [
+                                    {
+                                        ref: "Marcos 14:34-35",
+                                        rvr: "Y les dijo: Mi alma está muy triste, hasta la muerte; quedaos aquí y velad. Yéndose un poco adelante, se postró en tierra, y oró que si fuese posible, pasase de él aquella hora.",
+                                        ntv: "Les dijo: «Mi alma está destrozada de tanta tristeza, hasta el punto de la muerte. Quédense aquí y velen conmigo». Se adelantó un poco más y cayó en tierra. Oró que, si fuera posible, pasara de él esa hora de sufrimiento."
+                                    },
+                                    {
+                                        ref: "Lucas 22:42-44",
+                                        rvr: "diciendo: Padre, si quieres, pasa de mí esta copa; pero no se haga mi voluntad, sino la tuya. Y se le apareció un ángel del cielo para fortalecerle. Y estando en agonía, oraba más intensamente; y era su sudor como grandes gotas de sangre que caían hasta la tierra.",
+                                        ntv: "«Padre, si quieres, te pido que quites esta copa de sufrimiento de mí. Sin embargo, quiero que se haga tu voluntad, no la mía». Entonces apareció un ángel del cielo y lo fortaleció. Estaba en tanta agonía que se intensificó su oración; sudaba gotas de sangre que caían al suelo como grandes gotas."
+                                    }
+                                ],
+                                question: "En tus momentos de Getsemaní personal (ansiedad, dolor), ¿tiendes a aislarte y aletargarte o sigues el ejemplo de Jesús de orar con fervor y buscar ayuda del Padre?"
+                            },
+                            {
+                                title: "El Cuerpo Habla",
+                                subtitle: "Estación 5 · El Costo del Silencio",
+                                context: "Dios diseñó nuestro cuerpo y nuestra mente como una unidad integrada. Cuando elegimos callar, reprimir o ignorar emociones difíciles como el resentimiento, la amargura o la culpa, el cuerpo físico comienza a manifestar esa tensión. La Biblia advierte que guardar silencio «seca los huesos». Expresar y confesar nuestras emociones delante de Dios y de personas idóneas es vital para nuestra salud física y espiritual.",
+                                verses: [
+                                    {
+                                        ref: "Salmo 32:3",
+                                        rvr: "Mientras callé, se envejecieron mis huesos en mi gemir todo el día.",
+                                        ntv: "Mientras me negué a confesar mi pecado, mi cuerpo se desvaneció, y gemía todo el día."
+                                    },
+                                    {
+                                        ref: "Proverbios 17:22",
+                                        rvr: "El corazón alegre constituye buen remedio; mas el espíritu triste seca los huesos.",
+                                        ntv: "El corazón alegre es una buena medicina, pero el espíritu quebrantado seca los huesos."
+                                    }
+                                ],
+                                question: "¿Qué síntomas físicos o tensiones corporales has experimentado recientemente por callar u ocultar sentimientos difíciles en lugar de hablarlos?"
+                            },
+                            {
+                                title: "Expresando en Amor",
+                                subtitle: "Estación 6 · El Semáforo del Enojo",
+                                context: "El enojo es una de las emociones más complejas de gestionar. La Palabra de Dios no nos prohíbe enojarnos, sino que nos advierte: «Enójense, pero no pequen». Esto significa que podemos sentir indignación y establecer límites (el polo positivo de la rabia) sin necesidad de gritar, insultar o dañar a nuestro prójimo. El enojo gestionado bajo el fruto del Espíritu Santo nos permite comunicarnos con firmeza y respeto.",
+                                verses: [
+                                    {
+                                        ref: "Efesios 4:26-27",
+                                        rvr: "Airaos, pero no pequéis; no se ponga el sol sobre vuestro enojo, ni deis lugar al diablo.",
+                                        ntv: "Además, «no pequen al dejar que el enojo los controle». No permitan que el sol se ponga mientras siguen enojados, porque el enojo da lugar al diablo."
+                                    },
+                                    {
+                                        ref: "Hebreos 4:16",
+                                        rvr: "Acerquémonos, pues, confiadamente al trono de la gracia, para alcanzar misericordia y hallar gracia para el oportuno socorro.",
+                                        ntv: "Así que acerquémonos con toda confianza al trono de la gracia de Dios. Allí recibiremos su misericordia y encontraremos la gracia que nos ayudará cuando más la necesitemos."
+                                    }
+                                ],
+                                question: "¿Qué emoción te resulta más difícil de expresar en amor sin dañar a otros y qué ayuda necesitas de Dios para lograrlo?"
+                            },
+                            {
+                                title: "Restauración y Perdón",
+                                subtitle: "Estación 7 · Reconstruyendo la Paz",
+                                context: "A veces fallamos y permitimos que nuestras emociones descontroladas lastimen a quienes amamos. En esos momentos, la arquitectura del Espíritu nos llama a humillarnos, asumir nuestro error y pedir perdón activamente tanto a Dios como a la persona afectada. El amor y el perdón no son sentimientos pasivos, sino decisiones voluntarias que restauran los puentes rotos y devuelven la paz al hogar.",
+                                verses: [
+                                    {
+                                        ref: "Efesios 4:31-32",
+                                        rvr: "Quítense de vosotros toda amargura, enojo, ira, gritería y maledicencia, y toda malicia. Antes sed benignos unos con otros, misericordiosos, perdonándoos unos a otros, como Dios también os perdonó a vosotros en Cristo.",
+                                        ntv: "Líbrense de toda amargura, furia, enojo, palabras ásperas, calumnias y toda clase de mala conducta. Por el contrario, sean amables unos con otros, tiernos de corazón y perdónense unos a otros, tal como Dios los perdonó a ustedes por medio de Cristo."
+                                    }
+                                ],
+                                question: "¿Con qué persona necesitas buscar una conversación honesta y en amor hoy para pedir perdón o reparar un malentendido emocional?"
+                            }
+                        ]
+                    },
+                    {
+                        id: "sin_mascaras",
+                        isCurrentWeek: false,
                         title: "Sin Filtros: Quitando la Máscara ante el Creador",
                         subtitle: "Un taller y devocional de 7 estaciones para remover las hojas de higuera y vivir en la libertad del Diseño Original.",
                         icon: "compass",
@@ -676,6 +901,7 @@
                 },
 
                 otherDevotionals: [
+                    { title: "Arquitectura del Espíritu: Construyendo paz desde nuestras emociones", localId: "gestion_emocional", icon: 'compass', color: "bg-sky-950 text-sky-200", cat: "Propósito" },
                     { title: "Sin Filtros: Quitando la Máscara ante el Creador", localId: "sin_mascaras", icon: 'compass', color: "bg-indigo-950 text-indigo-200", cat: "Propósito" },
                     { title: "Ruta de Libertad: Los Doce Pasos", localId: "doce_pasos", icon: 'compass', color: "bg-blue-950 text-blue-200", cat: "Propósito" },
                     { title: "Manual de Naufragios", localId: "faro_capitan", icon: 'compass', color: "bg-sky-950 text-sky-200", cat: "Propósito" },
@@ -709,7 +935,7 @@
 
                     // Cargar último devocional seleccionado o default de la semana activa
                     const currentWeekDev = this.devocionales.find(d => d.isCurrentWeek);
-                    const currentWeekId = currentWeekDev ? currentWeekDev.id : 'sin_mascaras';
+                    const currentWeekId = currentWeekDev ? currentWeekDev.id : 'gestion_emocional';
 
                     const lastActiveWeekId = localStorage.getItem('juanita_last_active_week_id');
                     let savedDevId = localStorage.getItem('juanita_selected_dev_id');
@@ -931,7 +1157,7 @@
                 },
 
                  async markStepComplete() {
-                     if (this.selectedDevocional && (this.selectedDevocional.id === 'faro_capitan' || this.selectedDevocional.id === 'doce_pasos' || this.selectedDevocional.id === 'sin_mascaras') && this.activeStep === 1) {
+                     if (this.selectedDevocional && (this.selectedDevocional.id === 'faro_capitan' || this.selectedDevocional.id === 'doce_pasos' || this.selectedDevocional.id === 'sin_mascaras' || this.selectedDevocional.id === 'gestion_emocional') && this.activeStep === 1) {
                         const yellow = this.reflections[this.activeStep + '_yellow'] || '';
                         const red = this.reflections[this.activeStep + '_red'] || '';
                         const care = this.reflections[this.activeStep + '_care'] || '';
@@ -1280,15 +1506,19 @@
                 </div>
                 <div id="readingScroll" class="flex-1 overflow-y-auto px-8 pt-8 pb-36 z-10 no-scrollbar">
                     <div class="mb-8">
-                        <p class="text-[#c68b6d] font-black text-[9px] uppercase tracking-widest mb-2" x-text="roadmap[activeStep].subtitle"></p>
-                        <h2 class="text-3xl font-black text-slate-900 leading-tight tracking-tight" x-text="roadmap[activeStep].title"></h2>
+                        <p class="text-[#c68b6d] font-black text-[9px] uppercase tracking-widest mb-2" x-text="roadmap[activeStep] ? roadmap[activeStep].subtitle : ''"></p>
+                        <h2 class="text-3xl font-black text-slate-900 leading-tight tracking-tight" x-text="roadmap[activeStep] ? roadmap[activeStep].title : ''"></h2>
                     </div>
-                    <p class="text-lg text-slate-600 leading-relaxed font-medium mb-10 text-justify" x-text="roadmap[activeStep].context"></p>
-                    <div class="p-8 bg-[#1e293b] rounded-[2.5rem] shadow-2xl text-white mb-10 relative overflow-hidden">
+                    <p class="text-lg text-slate-600 leading-relaxed font-medium mb-10 text-justify" x-text="roadmap[activeStep] ? roadmap[activeStep].context : ''"></p>
+                    <div class="p-8 bg-[#1e293b] rounded-[2.5rem] shadow-2xl text-white mb-10 relative overflow-hidden space-y-6">
                         <div class="absolute top-0 right-0 p-6 opacity-5"><i data-lucide="quote" class="w-24 h-24 text-white"></i></div>
-                        <p class="text-xl font-serif italic mb-6 relative z-10 text-justify leading-snug" x-text="bibleVersion === 'RVR1960' ? roadmap[activeStep].verse_rvr : roadmap[activeStep].verse_ntv"></p>
-                        <div class="w-10 h-1 bg-[#c68b6d] mb-4 rounded-full"></div>
-                        <p class="text-[10px] font-black text-[#c68b6d] uppercase tracking-[0.2em]" x-text="roadmap[activeStep].ref"></p>
+                        <template x-for="(v, vIdx) in (roadmap[activeStep] ? (roadmap[activeStep].verses || [ { ref: roadmap[activeStep].ref, rvr: roadmap[activeStep].verse_rvr, ntv: roadmap[activeStep].verse_ntv } ]) : [])">
+                            <div class="relative z-10" :class="vIdx > 0 ? 'border-t border-white/5 pt-6' : ''">
+                                <p class="text-xl font-serif italic text-justify leading-snug mb-4" x-text="bibleVersion === 'RVR1960' ? v.rvr : v.ntv"></p>
+                                <div class="w-10 h-0.5 bg-[#c68b6d]/60 mb-3 rounded-full"></div>
+                                <p class="text-[10px] font-black text-[#c68b6d] uppercase tracking-[0.2em]" x-text="v.ref"></p>
+                            </div>
+                        </template>
                     </div>
                     <div class="py-2 space-y-6">
                         <!-- Interfaz de Actividad de Tarjetas Amarilla y Roja para el Faro (Estación 2) -->
@@ -1330,10 +1560,143 @@
                             </div>
                         </template>
 
+                        <!-- Interfaz de Actividad de Matriz de Emociones (11 Tarjetas) para Arquitectura del Espíritu -->
+                        <template x-if="selectedDevocional && selectedDevocional.id === 'gestion_emocional' && activeStep === 1">
+                            <div class="space-y-6">
+                                <p class="text-xs text-slate-500 font-medium leading-relaxed mb-4">
+                                    Haz clic en cualquiera de las 11 emociones de la matriz para girarla en 3D. Selecciona ver su polo <strong>(-) Negativo</strong> o <strong>(+) Positivo</strong> y presiona <strong>Elegir</strong> para autollenar la reflexión de abajo:
+                                </p>
+                                
+                                <!-- Grid de Tarjetas Giratorias 3D -->
+                                <div class="grid grid-cols-2 gap-4 pb-4">
+                                    <template x-for="emotion in emotionsMatrix">
+                                        <div class="flip-container h-[230px] cursor-pointer">
+                                            <div class="flip-card-inner h-full w-full relative" :class="flippedCards.includes(emotion.id) ? 'flipped' : ''">
+                                                
+                                                <!-- FRONT SIDE: Neutral (shows central emotion name, icon and choice buttons) -->
+                                                <div class="flip-card-front bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-800 dark:text-slate-100 flex flex-col justify-between p-4 rounded-3xl shadow-sm hover:shadow-md transition-all">
+                                                    <div class="flex flex-col items-center justify-center flex-1 text-center py-2">
+                                                        <div class="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-[#c68b6d] mb-2 border border-slate-100 dark:border-slate-700/50">
+                                                            <i :data-lucide="emotion.icon" class="w-6 h-6"></i>
+                                                        </div>
+                                                        <h4 class="text-sm font-black tracking-tight" x-text="emotion.name"></h4>
+                                                        <p class="text-[9px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-wider mt-1">Elige qué polo ver</p>
+                                                    </div>
+                                                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-50 dark:border-slate-800/50">
+                                                        <button @click.stop="flipCard(emotion.id, 'negative')" class="bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/20 dark:hover:bg-rose-950/30 dark:text-rose-400 text-[9px] font-black uppercase tracking-wider py-2 px-1 rounded-xl transition-all border border-rose-100/50 dark:border-rose-900/10">
+                                                            Negativo
+                                                        </button>
+                                                        <button @click.stop="flipCard(emotion.id, 'positive')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/30 dark:text-emerald-400 text-[9px] font-black uppercase tracking-wider py-2 px-1 rounded-xl transition-all border border-emerald-100/50 dark:border-emerald-900/10">
+                                                            Positivo
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <!-- BACK SIDE: Dynamic Content (Negative or Positive) -->
+                                                <div class="flip-card-back flex flex-col justify-between p-4 rounded-3xl transition-all"
+                                                     :class="cardSides[emotion.id] === 'negative' ? 'bg-rose-50 dark:bg-rose-950/10 border border-rose-200 dark:border-rose-900/20 text-rose-950 dark:text-rose-100' : 'bg-emerald-50 dark:bg-emerald-950/10 border border-emerald-200 dark:border-emerald-900/20 text-emerald-950 dark:text-emerald-100'">
+                                                    
+                                                    <div>
+                                                        <!-- Header of Back Side -->
+                                                        <div class="flex items-center justify-between mb-2 border-b pb-1.5"
+                                                             :class="cardSides[emotion.id] === 'negative' ? 'border-rose-100 dark:border-rose-900/10' : 'border-emerald-100 dark:border-emerald-900/10'">
+                                                            <span class="text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5">
+                                                                <i :data-lucide="emotion.icon" class="w-3.5 h-3.5" :class="cardSides[emotion.id] === 'negative' ? 'text-rose-500' : 'text-emerald-500'"></i>
+                                                                <span x-text="emotion.name"></span>
+                                                            </span>
+                                                            <span class="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-md"
+                                                                  :class="cardSides[emotion.id] === 'negative' ? 'bg-rose-100 text-rose-600 dark:bg-rose-900/20' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/20'"
+                                                                  x-text="cardSides[emotion.id] === 'negative' ? 'Negativo' : 'Positivo'">
+                                                            </span>
+                                                        </div>
+
+                                                        <!-- Text of Back Side -->
+                                                        <div class="space-y-1">
+                                                            <h4 class="text-xs font-black uppercase tracking-tight"
+                                                                :class="cardSides[emotion.id] === 'negative' ? 'text-rose-700 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'"
+                                                                x-text="cardSides[emotion.id] === 'negative' ? emotion.negative : emotion.positive">
+                                                            </h4>
+                                                            <p class="text-[10px] text-slate-600 dark:text-slate-400 leading-snug font-medium text-justify"
+                                                               x-text="cardSides[emotion.id] === 'negative' ? emotion.descNeg : emotion.descPos">
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Footer of Back Side -->
+                                                    <div class="pt-2 border-t flex items-center justify-between"
+                                                         :class="cardSides[emotion.id] === 'negative' ? 'border-rose-100 dark:border-rose-900/10' : 'border-emerald-100 dark:border-emerald-900/10'">
+                                                        <!-- Button to Return (Unflip) -->
+                                                        <button @click.stop="unflipCard(emotion.id)" class="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-400 font-bold text-[9px] uppercase tracking-wider flex items-center gap-1">
+                                                            <i data-lucide="arrow-left" class="w-3 h-3"></i>
+                                                            <span>Volver</span>
+                                                        </button>
+                                                        
+                                                        <!-- Button to Choose -->
+                                                        <button @click.stop="selectEmotion(emotion, cardSides[emotion.id])" 
+                                                                :class="cardSides[emotion.id] === 'negative' ? 'bg-rose-500 hover:bg-rose-600 text-white' : 'bg-emerald-600 hover:bg-emerald-700 text-white'"
+                                                                class="font-black text-[9px] uppercase tracking-widest px-2.5 py-1 rounded-xl transition-all shadow-sm flex items-center gap-1">
+                                                            <i data-lucide="check-square" class="w-3 h-3"></i>
+                                                            <span>Elegir</span>
+                                                        </button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+
+                                <!-- Formulario de Respuestas Estructurado -->
+                                <div class="space-y-6 pt-4 border-t border-slate-100">
+                                    <!-- Tarjeta Amarilla (Desborde/Represión) -->
+                                    <div class="bg-amber-50/75 border border-amber-300 rounded-[2rem] p-6 shadow-md transition-all">
+                                        <div class="flex items-center gap-3 mb-4">
+                                            <div class="w-8 h-12 rounded bg-amber-400 flex items-center justify-center shadow-lg border border-amber-300">
+                                                <i data-lucide="alert-triangle" class="w-5 h-5 text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-sm font-black text-amber-800 uppercase tracking-wider">Tarjeta Amarilla</h4>
+                                                <p class="text-xs text-amber-700/80 font-medium">¿Cómo se ve tu desborde o represión en esta emoción?</p>
+                                            </div>
+                                        </div>
+                                        <textarea x-model="reflections[activeStep + '_yellow']" class="w-full bg-white border border-amber-100 rounded-[1.5rem] p-4 text-slate-800 outline-none focus:border-amber-400 focus:ring-4 focus:ring-amber-400/5 shadow-sm min-h-[120px] placeholder:text-slate-300" placeholder="Selecciona una tarjeta arriba o escribe aquí tu experiencia..."></textarea>
+                                    </div>
+
+                                    <!-- Tarjeta Roja (Consecuencias) -->
+                                    <div class="bg-rose-50/75 border border-rose-300 rounded-[2rem] p-6 shadow-md transition-all">
+                                        <div class="flex items-center gap-3 mb-4">
+                                            <div class="w-8 h-12 rounded bg-rose-500 flex items-center justify-center shadow-lg border border-rose-400">
+                                                <i data-lucide="x-circle" class="w-5 h-5 text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-sm font-black text-rose-900 uppercase tracking-wider">Tarjeta Roja</h4>
+                                                <p class="text-xs text-rose-700/80 font-medium">¿Qué consecuencias ha traído a tu vida no gestionarla a tiempo?</p>
+                                            </div>
+                                        </div>
+                                        <textarea x-model="reflections[activeStep + '_red']" class="w-full bg-white border border-rose-100 rounded-[1.5rem] p-4 text-slate-800 outline-none focus:border-rose-400 focus:ring-4 focus:ring-rose-400/5 shadow-sm min-h-[120px] placeholder:text-slate-300" placeholder="Escribe las consecuencias o cómo ha afectado tus relaciones..."></textarea>
+                                    </div>
+
+                                    <!-- Cuidado de Dios (Polo Positivo / Canalización) -->
+                                    <div class="bg-emerald-50/75 border border-emerald-300 rounded-[2rem] p-6 shadow-md transition-all">
+                                        <div class="flex items-center gap-3 mb-4">
+                                            <div class="w-8 h-12 rounded bg-emerald-500 flex items-center justify-center shadow-lg border border-emerald-400">
+                                                <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="text-sm font-black text-emerald-900 uppercase tracking-wider">Canalización Saludable</h4>
+                                                <p class="text-xs text-emerald-700/80 font-medium">¿Cómo puedes canalizar esta emoción positivamente según el Diseño Original?</p>
+                                            </div>
+                                        </div>
+                                        <textarea x-model="reflections[activeStep + '_care']" class="w-full bg-white border border-emerald-100 rounded-[1.5rem] p-4 text-slate-800 outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-400/5 shadow-sm min-h-[120px] placeholder:text-slate-300" placeholder="Escribe aquí tu plan de acción y cómo el Espíritu Santo te guiará..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+
                         <!-- Interfaz Estándar para Otras Estaciones -->
-                        <template x-if="!(selectedDevocional && (selectedDevocional.id === 'faro_capitan' || selectedDevocional.id === 'doce_pasos' || selectedDevocional.id === 'sin_mascaras') && activeStep === 1)">
+                        <template x-if="!(selectedDevocional && (selectedDevocional.id === 'faro_capitan' || selectedDevocional.id === 'doce_pasos' || selectedDevocional.id === 'sin_mascaras' || selectedDevocional.id === 'gestion_emocional') && activeStep === 1)">
                             <div class="space-y-4">
-                                <h3 class="text-xl font-black text-slate-900 tracking-tight" x-text="roadmap[activeStep].question"></h3>
+                                <h3 class="text-xl font-black text-slate-900 tracking-tight" x-text="roadmap[activeStep] ? roadmap[activeStep].question : ''"></h3>
                                 <div class="relative">
                                     <textarea x-model="reflections[activeStep]" class="w-full bg-white border border-slate-100 rounded-[2rem] p-6 text-lg min-h-[200px] outline-none focus:border-[#c68b6d] focus:ring-4 focus:ring-[#c68b6d]/5 shadow-sm transition-all placeholder:text-slate-300" placeholder="Escribe tus pensamientos aquí..."></textarea>
                                     <div class="absolute bottom-5 right-6"><i data-lucide="pen-tool" class="w-5 h-5 text-slate-200"></i></div>
@@ -1386,8 +1749,15 @@
                                  x-transition:enter-end="opacity-100 translate-y-0"
                                  class="px-8 pb-8">
                                 <div class="w-full h-px bg-slate-50 mb-6"></div>
-                                <p class="text-lg font-serif italic text-slate-800 text-justify leading-relaxed" 
-                                   x-text="bibleVersion === 'RVR1960' ? step.verse_rvr : step.verse_ntv"></p>
+                                <div class="space-y-6">
+                                    <template x-for="(v, vIdx) in (step.verses || [ { ref: step.ref, rvr: step.verse_rvr, ntv: step.verse_ntv } ])">
+                                        <div :class="vIdx > 0 ? 'border-t border-slate-100 pt-4' : ''">
+                                            <p class="text-lg font-serif italic text-slate-800 text-justify leading-relaxed mb-2" 
+                                               x-text="bibleVersion === 'RVR1960' ? v.rvr : v.ntv"></p>
+                                            <p class="text-[9px] font-black text-[#c68b6d] uppercase tracking-[0.2em]" x-text="v.ref"></p>
+                                        </div>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </template>
