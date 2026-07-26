@@ -141,7 +141,7 @@
                 flippedCards: [],
                 emotionsMatrix: [
                     { name: 'Alegría', id: 'alegria', negative: 'Euforia', positive: 'Serenidad', descNeg: 'Desborde de excitación artificial que nos desconecta del presente.', descPos: 'Paz profunda e imperturbable que nace de la confianza en Dios.', icon: 'smile' },
-                    { name: 'Tristeza', id: 'tristeza', negative: 'Amargura', positive: 'Reconciliación', descNeg: 'Resentimiento guardado, dolor que se pudre en el aislamiento.', descPos: 'Proceso de aceptación que nos abre a sanar y restaurar puentes.', icon: 'frown' },
+                    { name: 'Tristeza', id: 'tristeza', negative: 'Amargura', positive: 'Dulzura', descNeg: 'Resentimiento guardado, dolor que se pudre en el aislamiento.', descPos: 'Capacidad de recibir consuelo, mantener un corazón tierno ante el dolor y sanar sin endurecerse.', icon: 'frown' },
                     { name: 'Rabia', id: 'rabia', negative: 'Sumisión', positive: 'Fuerza (Límites)', descNeg: 'Callar y ceder, acumulando resentimiento o explotando violentamente.', descPos: 'Energía enfocada para proteger nuestra dignidad y trazar límites con respeto.', icon: 'flame' },
                     { name: 'Miedo', id: 'miedo', negative: 'Cobardía', positive: 'Poder (para Lograr)', descNeg: 'Evadir responsabilidades o retroceder ante los desafíos por temor.', descPos: 'Cautela inteligente que nos impulsa a prepararnos y actuar con valentía en Dios.', icon: 'shield' },
                     { name: 'Sorpresa', id: 'sorpresa', negative: 'Parálisis / Negación', positive: 'Curiosidad (para Explorar)', descNeg: 'Quedarse inmóvil ante lo inesperado, rechazando la realidad.', descPos: 'Mentalidad abierta y asombro para aprender y explorar lo nuevo del Creador.', icon: 'sparkles' },
@@ -150,7 +150,8 @@
                     { name: 'Frustración', id: 'frustracion', negative: 'Bloqueo / Victimismo', positive: 'Resiliencia / Innovación', descNeg: 'Culpar al destino o a otros por los obstáculos, rindiéndose.', descPos: 'Capacidad de adaptarse, aprender del fracaso y buscar nuevos caminos en Dios.', icon: 'refresh-cw' },
                     { name: 'Confianza', id: 'confianza', negative: 'Ingenuidad / Ceguera', positive: 'Security (para Delegar)', descNeg: 'Confiar sin discernimiento, negando riesgos o banderas rojas.', descPos: 'Certeza tranquila para apoyarse en otros y delegar con sabiduría y madurez.', icon: 'users' },
                     { name: 'Admiración / Deseo', id: 'admiracion', negative: 'Envidia Tóxica', positive: 'Inspiración (para Mejorar)', descNeg: 'Desechar el logro ajeno, sintiéndose menos y queriendo que el otro falle.', descPos: 'Apreciar la excelencia del prójimo y usar su ejemplo para crecer nosotros.', icon: 'trending-up' },
-                    { name: 'Orgullo', id: 'orgullo', negative: 'Aislamiento / Soberbia', positive: 'Autovaloración / Dignidad', descNeg: 'Creerse superior a los demás, rechazando el consejo y la corrección.', descPos: 'Sano sentido de valor personal, reconociendo nuestros dones con humildad.', icon: 'user' }
+                    { name: 'Orgullo', id: 'orgullo', negative: 'Aislamiento / Soberbia', positive: 'Autovaloración / Dignidad', descNeg: 'Creerse superior a los demás, rechazando el consejo y la corrección.', descPos: 'Sano sentido de valor personal, reconociendo nuestros dones con humildad.', icon: 'user' },
+                    { name: 'Ansiedad', id: 'ansiedad', negative: 'Afán / Angustia', positive: 'Paz (para Depender)', descNeg: 'Obsesión por controlar el futuro, perdiendo el sueño y la confianza en Dios.', descPos: 'Alerta para orar y entregar el afán, recibiendo la paz que sobrepasa todo entendimiento.', icon: 'alert-circle' }
                 ],
                 cardSides: {
                     alegria: 'positive',
@@ -163,7 +164,8 @@
                     frustracion: 'positive',
                     confianza: 'positive',
                     admiracion: 'positive',
-                    orgullo: 'positive'
+                    orgullo: 'positive',
+                    ansiedad: 'positive'
                 },
                 flipCard(emotionId, side) {
                     this.cardSides[emotionId] = side;
@@ -382,7 +384,7 @@
                                 "El resultado de reprimir nuestras emociones es que, cuando la presión sube, terminamos haciéndonos daño o lastimando a otros. A ese mal manejo es al que llamamos Amargura, Sumisión o Cobardía.",
                                 "Pero, ¿qué pasaría si Dios no nos diseñó para esconder lo que sentimos, sino que nos dio una caja de herramientas completa para edificar nuestra vida?",
                                 "El Creador no se equivocó. Las emociones no son un defecto de fábrica. A lo largo de este devocional, vamos a dejar de tenerle miedo a nuestra propia caja de herramientas. Vamos a tomar 12 emociones centrales que absolutamente todos sentimos (sí, incluso el que se acaba de machucar el dedo) y aprenderemos cómo agarrarlas por el mango correcto.",
-                                "Descubriremos que la Rabia bien dirigida no destruye, sino que nos da la fuerza para poner límites sanos, y que la Tristeza no tiene que amargarnos, sino prepararnos para la reconciliación.",
+                                "Descubriremos que la Rabia bien dirigida no destruye, sino que nos da la fuerza para poner límites sanos, y que la Tristeza no tiene que amargarnos, sino conducirnos hacia la dulzura del consuelo divino.",
                                 "¡Bienvenidos al manual para organizar nuestras herramientas y empezar a construir con propósito!",
                                 "<span class=\"text-[#c68b6d] font-black not-italic block mt-4 border-t border-white/10 pt-4\">Reflexión inicial:</span>",
                                 "<span class=\"block mt-2 opacity-80 pl-4 border-l-2 border-[#c68b6d]/20 not-italic font-sans text-sm font-medium\">• ¿Por qué solemos ocultar o temerle a nuestra propia \"caja de herramientas\" emocional?<br>• ¿Cómo ejemplifica la escena del martillazo en el dedo nuestra verdadera reacción emocional natural bajo presión?<br>• ¿Qué cambia en tu vida al entender que la rabia o la tristeza tienen un propósito constructivo y positivo cuando las tomamos por el mango correcto?</span>",
@@ -412,7 +414,7 @@
                             {
                                 title: "La Matriz Emocional",
                                 subtitle: "Estación 2 · La Matriz (Actividad)",
-                                context: "Las emociones actúan como indicadores. Sin embargo, debido al quiebre de nuestra naturaleza, a menudo las llevamos a los extremos: el desborde descontrolado o la represión silenciosa. El diseño original propone la gestión y canalización de cada emoción para transformarla en una virtud: la tristeza en reconciliación, la rabia en límites sanos y el miedo en poder para avanzar. Usa las tarjetas de abajo para explorar tu matriz emocional de 11 sentimientos.",
+                                context: "Las emociones actúan como indicadores. Sin embargo, debido al quiebre de nuestra naturaleza, a menudo las llevamos a los extremos: el desborde descontrolado o la represión silenciosa. El diseño original propone la gestión y canalización de cada emoción para transformarla en una virtud: la tristeza en dulzura, la rabia en límites sanos y el miedo en poder para avanzar. Usa las tarjetas de abajo para explorar tu matriz emocional de 11 sentimientos.",
                                 verses: [
                                     {
                                         ref: "Proverbios 4:23",
@@ -1576,7 +1578,10 @@
                                                 <!-- FRONT SIDE: Neutral (shows central emotion name, icon and choice buttons) -->
                                                 <div class="flip-card-front bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-800 dark:text-slate-100 flex flex-col justify-between p-4 rounded-3xl shadow-sm hover:shadow-md transition-all">
                                                     <div class="flex flex-col items-center justify-center flex-1 text-center py-2">
-                                                        <div class="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-[#c68b6d] mb-2 border border-slate-100 dark:border-slate-700/50">
+                                                        <div class="w-12 h-12 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-[#c68b6d] mb-2 border border-slate-100 dark:border-slate-700/50 overflow-hidden relative">
+                                                            <img :src="'emociones/' + emotion.id + '.jpg'" 
+                                                                 @error="$el.style.display = 'none'"
+                                                                 class="absolute inset-0 w-full h-full object-cover z-10" />
                                                             <i :data-lucide="emotion.icon" class="w-6 h-6"></i>
                                                         </div>
                                                         <h4 class="text-sm font-black tracking-tight" x-text="emotion.name"></h4>
@@ -1823,6 +1828,14 @@
                                 <button @click="view = 'video_intro'" class="text-[#c68b6d] hover:text-[#a36a4d] transition-colors font-black uppercase text-[9px] tracking-[0.2em] flex items-center gap-1">
                                     <i data-lucide="eye" class="w-3.5 h-3.5"></i> Ver Portada
                                 </button>
+                                <template x-if="selectedDevocional && selectedDevocional.id === 'gestion_emocional'">
+                                    <div class="flex items-center gap-x-3">
+                                        <span class="text-slate-300 text-xs">•</span>
+                                        <a href="./matriz_emociones.html" target="_blank" class="text-emerald-600 hover:text-emerald-700 transition-colors font-black uppercase text-[9px] tracking-[0.2em] flex items-center gap-1">
+                                            <i data-lucide="tv" class="w-3.5 h-3.5"></i> Vista Proyector
+                                        </a>
+                                    </div>
+                                </template>
                             </div>
                         </div>
                     </div>
