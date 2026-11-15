@@ -13,10 +13,10 @@
     
     <style>
         :root {
-            --primary: #c68b6d;
-            --primary-dark: #a36a4d;
+            --primary: #a36a4d;
+            --primary-dark: #8c5034;
             --bg-warm: #fdfcf9;
-            --text-main: #1e293b;
+            --text-main: #0f172a;
         }
         body { font-family: 'Inter', sans-serif; background-color: #f1ede8; color: var(--text-main); }
         .font-serif { font-family: 'Lora', serif; }
@@ -2520,7 +2520,7 @@
                                     <div class="flex-1 min-w-0">
                                         <span class="text-[8px] font-black text-[#c68b6d] bg-[#c68b6d]/10 px-2.5 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">Activo</span>
                                         <h3 class="font-black text-slate-900 text-base leading-tight mb-1 truncate group-hover:text-[#c68b6d] transition-colors" x-text="dev.title"></h3>
-                                        <p class="text-[10px] text-slate-400 mb-3 truncate" x-text="dev.subtitle"></p>
+                                        <p class="text-xs text-slate-600 mb-3 truncate font-medium" x-text="dev.subtitle"></p>
                                         <div class="flex items-center gap-3">
                                             <div class="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden">
                                                 <div class="bg-[#c68b6d] h-full transition-all duration-1000 ease-out" :style="'width: ' + (progressData[dev.id] ? progressData[dev.id].progress : 0) + '%'"></div>
@@ -2550,7 +2550,7 @@
                 <div class="px-8 pt-14 pb-6 flex justify-between items-center glass z-30">
                     <button @click="view = 'plan_overview'" class="p-3 hover:bg-white rounded-2xl text-slate-800 transition-colors shadow-sm"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
                     <div class="text-center">
-                        <p class="text-[10px] font-black text-[#c68b6d] uppercase tracking-[0.2em]">Estación <span x-text="activeStep + 1"></span> de <span x-text="roadmap.length"></span></p>
+                        <p class="text-xs font-black text-[#8c5034] uppercase tracking-[0.2em]">Estación <span x-text="activeStep + 1"></span> de <span x-text="roadmap.length"></span></p>
                     </div>
                     <div class="flex bg-white/50 p-1.5 rounded-2xl border border-white/50 backdrop-blur-sm">
                         <button @click="bibleVersion = 'RVR1960'" :class="bibleVersion === 'RVR1960' ? 'bg-[#c68b6d] text-white shadow-md' : 'text-slate-400'" class="px-3 py-1.5 text-[10px] font-black rounded-xl transition-all duration-300">RVR</button>
@@ -2559,10 +2559,13 @@
                 </div>
                 <div id="readingScroll" class="flex-1 overflow-y-auto px-8 pt-8 pb-36 z-10 no-scrollbar">
                     <div class="mb-8">
-                        <p class="text-[#c68b6d] font-black text-[9px] uppercase tracking-widest mb-2" x-text="roadmap[activeStep] ? roadmap[activeStep].subtitle : ''"></p>
-                        <h2 class="text-3xl font-black text-slate-900 leading-tight tracking-tight" x-text="roadmap[activeStep] ? roadmap[activeStep].title : ''"></h2>
+                        <div class="flex items-center gap-2 mb-2 flex-wrap">
+                            <span class="text-[10px] font-black text-[#8c5034] bg-[#c68b6d]/15 px-2.5 py-0.5 rounded-full uppercase tracking-wider" x-text="'Estación ' + (activeStep + 1)"></span>
+                            <span class="text-xs font-bold text-slate-600 uppercase tracking-widest" x-text="roadmap[activeStep] ? (roadmap[activeStep].ref || roadmap[activeStep].subtitle) : ''"></span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight tracking-tight" x-text="roadmap[activeStep] ? roadmap[activeStep].title : ''"></h2>
                     </div>
-                    <p class="text-lg text-slate-600 leading-relaxed font-medium mb-10 text-justify" x-text="roadmap[activeStep] ? roadmap[activeStep].context : ''"></p>
+                    <p class="text-lg text-slate-800 leading-relaxed font-medium mb-10 text-justify" x-text="roadmap[activeStep] ? roadmap[activeStep].context : ''"></p>
                     <div class="p-8 bg-[#1e293b] rounded-[2.5rem] shadow-2xl text-white mb-10 relative overflow-hidden space-y-6">
                         <div class="absolute top-0 right-0 p-6 opacity-5"><i data-lucide="quote" class="w-24 h-24 text-white"></i></div>
                         <template x-for="(v, vIdx) in (roadmap[activeStep] ? (roadmap[activeStep].verses || [ { ref: roadmap[activeStep].ref, rvr: roadmap[activeStep].verse_rvr, ntv: roadmap[activeStep].verse_ntv } ]) : [])">
@@ -2754,8 +2757,8 @@
                             <div class="space-y-4">
                                 <h3 class="text-xl font-black text-slate-900 tracking-tight" x-text="roadmap[activeStep] ? roadmap[activeStep].question : ''"></h3>
                                 <div class="relative">
-                                    <textarea x-model="reflections[activeStep]" class="w-full bg-white border border-slate-100 rounded-[2rem] p-6 text-lg min-h-[200px] outline-none focus:border-[#c68b6d] focus:ring-4 focus:ring-[#c68b6d]/5 shadow-sm transition-all placeholder:text-slate-300" placeholder="Escribe tus pensamientos aquí..."></textarea>
-                                    <div class="absolute bottom-5 right-6"><i data-lucide="pen-tool" class="w-5 h-5 text-slate-200"></i></div>
+                                    <textarea x-model="reflections[activeStep]" class="w-full bg-white border border-slate-200 rounded-[2rem] p-6 text-lg text-slate-900 min-h-[200px] outline-none focus:border-[#a36a4d] focus:ring-4 focus:ring-[#a36a4d]/10 shadow-sm transition-all placeholder:text-slate-400" placeholder="Escribe tus pensamientos aquí..."></textarea>
+                                    <div class="absolute bottom-5 right-6"><i data-lucide="pen-tool" class="w-5 h-5 text-slate-400"></i></div>
                                 </div>
                             </div>
                         </template>
@@ -2786,30 +2789,35 @@
                 </div>
                 <div class="p-6 space-y-4">
                     <template x-for="(step, index) in roadmap">
-                        <div class="bg-white rounded-[2rem] border border-slate-100/50 shadow-sm overflow-hidden transition-all duration-300"
-                             :class="expandedBibleSteps.includes(index) ? 'ring-2 ring-[#c68b6d]/10' : ''">
+                        <div class="bg-white rounded-[2rem] border border-slate-200/90 shadow-sm overflow-hidden transition-all duration-300"
+                             :class="expandedBibleSteps.includes(index) ? 'ring-2 ring-[#a36a4d]/25 border-[#a36a4d]/40' : ''">
                             <button @click="toggleBibleStep(index)" 
-                                    class="w-full p-6 flex justify-between items-center hover:bg-slate-50 transition-colors text-left">
-                                <div>
-                                    <p class="text-[8px] font-black text-[#c68b6d] uppercase tracking-[0.2em] mb-1" x-text="'Estación ' + (index + 1) + ' · ' + step.subtitle"></p>
-                                    <p class="text-base font-black text-slate-900 tracking-tight" x-text="step.ref"></p>
+                                    class="w-full p-5 sm:p-6 flex justify-between items-center hover:bg-slate-50 transition-colors text-left gap-4">
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                                        <span class="text-[10px] font-black text-[#8c5034] bg-[#c68b6d]/15 px-2.5 py-0.5 rounded-full uppercase tracking-wider" x-text="'Estación ' + (index + 1)"></span>
+                                        <span class="text-xs text-slate-600 font-bold uppercase tracking-wider" x-text="step.ref"></span>
+                                    </div>
+                                    <h3 class="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-snug" x-text="step.title"></h3>
                                 </div>
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-slate-300 transition-transform duration-300"
-                                   :class="expandedBibleSteps.includes(index) ? 'rotate-180 text-[#c68b6d]' : ''"></i>
+                                <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center shrink-0">
+                                    <i data-lucide="chevron-down" class="w-5 h-5 text-slate-500 transition-transform duration-300"
+                                       :class="expandedBibleSteps.includes(index) ? 'rotate-180 text-[#8c5034]' : ''"></i>
+                                </div>
                             </button>
                             
                             <div x-show="expandedBibleSteps.includes(index)" 
                                  x-transition:enter="transition ease-out duration-300"
                                  x-transition:enter-start="opacity-0 -translate-y-2"
                                  x-transition:enter-end="opacity-100 translate-y-0"
-                                 class="px-8 pb-8">
-                                <div class="w-full h-px bg-slate-50 mb-6"></div>
+                                 class="px-6 sm:px-8 pb-8">
+                                <div class="w-full h-px bg-slate-100 mb-6"></div>
                                 <div class="space-y-6">
                                     <template x-for="(v, vIdx) in (step.verses || [ { ref: step.ref, rvr: step.verse_rvr, ntv: step.verse_ntv } ])">
                                         <div :class="vIdx > 0 ? 'border-t border-slate-100 pt-4' : ''">
-                                            <p class="text-lg font-serif italic text-slate-800 text-justify leading-relaxed mb-2" 
+                                            <p class="text-lg font-serif italic text-slate-900 text-justify leading-relaxed mb-2" 
                                                x-text="bibleVersion === 'RVR1960' ? v.rvr : v.ntv"></p>
-                                            <p class="text-[9px] font-black text-[#c68b6d] uppercase tracking-[0.2em]" x-text="v.ref"></p>
+                                            <p class="text-xs font-black text-[#8c5034] uppercase tracking-[0.2em]" x-text="v.ref"></p>
                                         </div>
                                     </template>
                                 </div>
@@ -2846,7 +2854,7 @@
                                 </div>
                                 <div class="flex-1">
                                     <h4 class="font-black text-slate-900 text-xl leading-tight tracking-tight mb-1" x-text="dev.title"></h4>
-                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Guía: Wilson Pareja C.</p>
+                                    <p class="text-xs font-bold text-slate-600 uppercase tracking-widest">Guía: Wilson Pareja C.</p>
                                 </div>
                                 <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-[#c68b6d]/10 group-hover:text-[#c68b6d] transition-colors">
                                     <i data-lucide="chevron-right" class="w-5 h-5"></i>
@@ -2894,41 +2902,39 @@
                         <div class="absolute left-11 top-10 bottom-10 w-0.5 bg-slate-100 -z-10"></div>
                         
                         <template x-for="(step, index) in roadmap">
-                            <div @click="if(index <= getNextStep() || completedSteps.includes(index)) { activeStep = index; view = 'reading'; refreshUI(); }" 
+                            <div @click="activeStep = index; view = 'reading'; refreshUI();" 
                                  :class="{
-                                    'opacity-40 grayscale pointer-events-none': index > getNextStep() && getNextStep() !== -1,
-                                    'border-[#c68b6d] ring-4 ring-[#c68b6d]/5 scale-[1.02] shadow-xl': index === getNextStep(),
-                                    'bg-white border-slate-100 shadow-sm': index !== getNextStep()
+                                    'border-[#a36a4d] ring-4 ring-[#a36a4d]/15 shadow-xl scale-[1.01] bg-white': index === activeStep || (activeStep === undefined && index === 0),
+                                    'bg-white border-slate-200 shadow-sm hover:border-[#a36a4d]/40 hover:shadow-md': index !== activeStep
                                  }"
-                                 class="flex items-center gap-5 p-5 border rounded-[2rem] cursor-pointer transition-all duration-500 group relative bg-white">
+                                 class="flex items-center gap-5 p-5 border rounded-[2rem] cursor-pointer transition-all duration-300 group relative bg-white">
                                 
                                 <!-- Icono de estado -->
                                 <div :class="{
-                                        'bg-[#c68b6d] text-white shadow-lg shadow-[#c68b6d]/20': completedSteps.includes(index),
-                                        'bg-[#1e293b] text-white': index === getNextStep(),
-                                        'bg-slate-50 text-slate-300': index > getNextStep() && getNextStep() !== -1
+                                        'bg-[#a36a4d] text-white shadow-lg shadow-[#a36a4d]/25': completedSteps.includes(index),
+                                        'bg-[#1e293b] text-white': !completedSteps.includes(index) && index === activeStep,
+                                        'bg-slate-100 text-slate-700 font-black border border-slate-200': !completedSteps.includes(index) && index !== activeStep
                                      }" 
-                                     class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-base transition-all">
+                                     class="w-12 h-12 rounded-2xl flex items-center justify-center font-black text-base shrink-0 transition-all">
                                     <template x-if="completedSteps.includes(index)">
                                         <i data-lucide="check" class="w-6 h-6"></i>
                                     </template>
-                                    <template x-if="index === getNextStep()">
+                                    <template x-if="!completedSteps.includes(index)">
                                         <span x-text="index + 1"></span>
                                     </template>
-                                    <template x-if="index > getNextStep() && getNextStep() !== -1">
-                                        <i data-lucide="lock" class="w-5 h-5"></i>
-                                    </template>
                                 </div>
 
-                                <div class="flex-1">
-                                    <p class="font-black text-slate-900 text-lg leading-none mb-1 group-hover:text-[#c68b6d] transition-colors" 
-                                       :class="completedSteps.includes(index) ? 'text-[#c68b6d]' : ''"
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-black text-slate-900 text-base sm:text-lg leading-snug mb-1.5 group-hover:text-[#8c5034] transition-colors" 
+                                       :class="completedSteps.includes(index) ? 'text-[#8c5034]' : ''"
                                        x-text="step.title"></p>
-                                    <p class="text-[8px] text-slate-400 uppercase font-black tracking-widest" x-text="step.subtitle"></p>
+                                    <div class="flex items-center gap-2 flex-wrap">
+                                        <span class="text-[10px] font-black text-[#8c5034] bg-[#c68b6d]/15 px-2 py-0.5 rounded-full uppercase tracking-wider" x-text="'Estación ' + (index + 1)"></span>
+                                        <span class="text-xs text-slate-600 font-bold uppercase tracking-wider" x-text="step.ref || step.subtitle"></span>
+                                    </div>
                                 </div>
 
-                                <div x-show="index <= getNextStep() || completedSteps.includes(index)" 
-                                     class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-200 group-hover:bg-[#c68b6d]/10 group-hover:text-[#c68b6d] transition-colors">
+                                <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-[#c68b6d]/15 group-hover:text-[#8c5034] transition-colors shrink-0">
                                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                                 </div>
                             </div>
